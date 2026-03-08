@@ -1,12 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
 import { exportToCSV } from "@/lib/export-csv";
 import FeatureCard from "@/components/FeatureCard";
 import DVFSummaryTable from "@/components/DVFSummaryTable";
 import { Plus, Download } from "lucide-react";
 
+const STORAGE_KEY = "dvf-calculator-rows";
+
+function loadRows(): FeatureRow[] {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return [createEmptyRow()];
+}
+
 const Index = () => {
-  const [rows, setRows] = useState<FeatureRow[]>([createEmptyRow()]);
+  const [rows, setRows] = useState<FeatureRow[]>(loadRows);
 
   const updateRow = (id: string, updated: FeatureRow) => {
     setRows((prev) => prev.map((r) => (r.id === id ? updated : r)));
