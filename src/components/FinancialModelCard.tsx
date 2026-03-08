@@ -48,8 +48,10 @@ const FinancialModelCard = ({ input, index, onChange, onDelete }: Props) => {
           type="text"
           placeholder="Feature name..."
           value={input.featureName}
+          readOnly={!!input.featureId}
           onChange={(e) => onChange({ ...input, featureName: e.target.value })}
-          className="flex-1 min-w-[120px] bg-transparent border-b border-transparent hover:border-border focus:border-primary text-sm font-semibold placeholder:text-muted-foreground/50 outline-none transition-colors"
+          className={`flex-1 min-w-[120px] bg-transparent border-b border-transparent hover:border-border focus:border-primary text-sm font-semibold placeholder:text-muted-foreground/50 outline-none transition-colors ${input.featureId ? "cursor-default text-muted-foreground" : ""}`}
+        />
         />
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className={`font-display font-bold text-lg ${npvPositive ? "text-accent" : "text-destructive"}`}>
