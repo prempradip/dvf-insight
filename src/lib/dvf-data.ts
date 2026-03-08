@@ -17,11 +17,11 @@ export const SCORE_OPTIONS: { value: ScoreValue; label: string }[] = [
 ];
 
 export const INVERTED_SCORE_OPTIONS: { value: ScoreValue; label: string }[] = [
-  { value: 21, label: "Very Low" },
-  { value: 13, label: "Low" },
-  { value: 8, label: "Medium" },
-  { value: 5, label: "High" },
-  { value: 0, label: "Very High" },
+  { value: 21, label: "Very Easy" },
+  { value: 13, label: "Easy" },
+  { value: 8, label: "Moderate" },
+  { value: 5, label: "Hard" },
+  { value: 0, label: "Very Hard" },
 ];
 
 export const CRITERIA: Criterion[] = [
