@@ -1,11 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
+import { FinancialInputs, createEmptyFinancialInput } from "@/lib/financial-calc";
 import { exportToCSV } from "@/lib/export-csv";
 import FeatureCard from "@/components/FeatureCard";
 import DVFSummaryTable from "@/components/DVFSummaryTable";
+import FinancialModelCard from "@/components/FinancialModelCard";
+import FinancialSummaryTable from "@/components/FinancialSummaryTable";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Download } from "lucide-react";
 
 const STORAGE_KEY = "dvf-calculator-rows";
+const FIN_STORAGE_KEY = "dvf-financial-inputs";
 
 function loadRows(): FeatureRow[] {
   try {
@@ -18,12 +23,29 @@ function loadRows(): FeatureRow[] {
   return [createEmptyRow()];
 }
 
+function loadFinancials(): FinancialInputs[] {
+  try {
+    const saved = localStorage.getItem(FIN_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return [createEmptyFinancialInput("", "")];
+}
+
 const Index = () => {
   const [rows, setRows] = useState<FeatureRow[]>(loadRows);
+  const [financials, setFinancials] = useState<FinancialInputs[]>(loadFinancials);
+  const [activeTab, setActiveTab] = useState("scoring");
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
   }, [rows]);
+
+  useEffect(() => {
+    localStorage.setItem(FIN_STORAGE_KEY, JSON.stringify(financials));
+  }, [financials]);
 
   const updateRow = (id: string, updated: FeatureRow) => {
     setRows((prev) => prev.map((r) => (r.id === id ? updated : r)));
@@ -35,6 +57,19 @@ const Index = () => {
 
   const addRow = () => setRows((prev) => [...prev, createEmptyRow()]);
 
+  const updateFinancial = (id: string, updated: FinancialInputs) => {
+    setFinancials((prev) => prev.map((f) => (f.id === id ? updated : f)));
+  };
+
+  const deleteFinancial = (id: string) => {
+    setFinancials((prev) =>
+      prev.length === 1 ? [createEmptyFinancialInput("", "")] : prev.filter((f) => f.id !== id)
+    );
+  };
+
+  const addFinancial = () =>
+    setFinancials((prev) => [...prev, createEmptyFinancialInput("", "")]);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
@@ -44,38 +79,63 @@ const Index = () => {
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">Desirability · Viability · Feasibility</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            {activeTab === "scoring" && (
+              <button
+                onClick={() => exportToCSV(rows)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+              >
+                <Download size={14} />
+                <span className="hidden sm:inline">Export CSV</span>
+                <span className="sm:hidden">CSV</span>
+              </button>
+            )}
             <button
-              onClick={() => exportToCSV(rows)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-            >
-              <Download size={14} />
-              <span className="hidden sm:inline">Export CSV</span>
-              <span className="sm:hidden">CSV</span>
-            </button>
-            <button
-              onClick={addRow}
+              onClick={activeTab === "scoring" ? addRow : addFinancial}
               className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               <Plus size={14} />
-              <span className="hidden sm:inline">Add Feature</span>
+              <span className="hidden sm:inline">
+                {activeTab === "scoring" ? "Add Feature" : "Add Model"}
+              </span>
               <span className="sm:hidden">Add</span>
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-4">
-        {rows.map((row, i) => (
-          <FeatureCard
-            key={row.id}
-            row={row}
-            index={i}
-            onChange={(updated) => updateRow(row.id, updated)}
-            onDelete={() => deleteRow(row.id)}
-          />
-        ))}
+      <main className="max-w-5xl mx-auto px-4 py-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsTrigger value="scoring">DVF Scoring</TabsTrigger>
+            <TabsTrigger value="financial">Financial Modelling</TabsTrigger>
+          </TabsList>
 
-        <DVFSummaryTable rows={rows} />
+          <TabsContent value="scoring" className="space-y-4">
+            {rows.map((row, i) => (
+              <FeatureCard
+                key={row.id}
+                row={row}
+                index={i}
+                onChange={(updated) => updateRow(row.id, updated)}
+                onDelete={() => deleteRow(row.id)}
+              />
+            ))}
+            <DVFSummaryTable rows={rows} />
+          </TabsContent>
+
+          <TabsContent value="financial" className="space-y-4">
+            {financials.map((fin, i) => (
+              <FinancialModelCard
+                key={fin.id}
+                input={fin}
+                index={i}
+                onChange={(updated) => updateFinancial(fin.id, updated)}
+                onDelete={() => deleteFinancial(fin.id)}
+              />
+            ))}
+            <FinancialSummaryTable inputs={financials} />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
