@@ -47,6 +47,29 @@ const Index = () => {
     localStorage.setItem(FIN_STORAGE_KEY, JSON.stringify(financials));
   }, [financials]);
 
+  // Sync financial models from DVF features
+  useEffect(() => {
+    setFinancials((prev) => {
+      const namedRows = rows.filter((r) => r.name.trim() !== "");
+      const existingByFeatureId = new Map(prev.filter((f) => f.featureId).map((f) => [f.featureId, f]));
+
+      // Build synced list: update names for existing, create new for missing
+      const synced = namedRows.map((row) => {
+        const existing = existingByFeatureId.get(row.id);
+        if (existing) {
+          return existing.featureName !== row.name ? { ...existing, featureName: row.name } : existing;
+        }
+        return createEmptyFinancialInput(row.id, row.name);
+      });
+
+      // Keep manually-added models (no featureId) at the end
+      const manual = prev.filter((f) => !f.featureId);
+
+      const result = [...synced, ...manual];
+      return result.length > 0 ? result : [createEmptyFinancialInput("", "")];
+    });
+  }, [rows]);
+
   const updateRow = (id: string, updated: FeatureRow) => {
     setRows((prev) => prev.map((r) => (r.id === id ? updated : r)));
   };
