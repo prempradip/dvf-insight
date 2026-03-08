@@ -98,8 +98,8 @@ const Index = () => {
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="font-display text-lg sm:text-xl font-bold tracking-tight">DVF Prioritisation</h1>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">Desirability · Viability · Feasibility</p>
+            <h1 className="font-display text-lg sm:text-xl font-bold tracking-tight">Value Matrix</h1>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {activeTab === "scoring" && (
