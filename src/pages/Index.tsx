@@ -21,7 +21,11 @@ function loadRows(): FeatureRow[] {
 const Index = () => {
   const [rows, setRows] = useState<FeatureRow[]>(loadRows);
 
-  const updateRow = (id: string, updated: FeatureRow) => {
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+  }, [rows]);
+
+
     setRows((prev) => prev.map((r) => (r.id === id ? updated : r)));
   };
 
