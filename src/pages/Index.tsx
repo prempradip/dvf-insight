@@ -25,7 +25,7 @@ const Index = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
   }, [rows]);
 
-
+  const updateRow = (id: string, updated: FeatureRow) => {
     setRows((prev) => prev.map((r) => (r.id === id ? updated : r)));
   };
 
