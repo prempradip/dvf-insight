@@ -9,11 +9,11 @@ export interface Criterion {
 }
 
 export const SCORE_OPTIONS: { value: ScoreValue; label: string }[] = [
-  { value: 0, label: "Very Low" },
-  { value: 5, label: "Low" },
-  { value: 8, label: "Medium" },
-  { value: 13, label: "High" },
-  { value: 21, label: "Very High" },
+  { value: 0, label: "No Impact" },
+  { value: 5, label: "Minimal" },
+  { value: 8, label: "Moderate" },
+  { value: 13, label: "Strong" },
+  { value: 21, label: "Critical" },
 ];
 
 export const INVERTED_SCORE_OPTIONS: { value: ScoreValue; label: string }[] = [
