@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
+import { exportToCSV } from "@/lib/export-csv";
 import FeatureCard from "@/components/FeatureCard";
 import DVFSummaryTable from "@/components/DVFSummaryTable";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 
 const Index = () => {
   const [rows, setRows] = useState<FeatureRow[]>([createEmptyRow()]);
