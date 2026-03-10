@@ -88,8 +88,73 @@ const PortfolioView = ({ rows, financials }: Props) => {
     );
   }
 
+  // Max per category: Desirability=4 criteria, Viability=4, Feasibility=4, each max 21
+  const maxD = 4 * 21;
+  const maxV = 4 * 21;
+  const maxF = 4 * 21;
+
+  const radarData = [
+    {
+      dimension: "Desirability",
+      ...Object.fromEntries(combined.map((f) => [f.name, Math.round((f.desirability / maxD) * 100)])),
+    },
+    {
+      dimension: "Viability",
+      ...Object.fromEntries(combined.map((f) => [f.name, Math.round((f.viability / maxV) * 100)])),
+    },
+    {
+      dimension: "Feasibility",
+      ...Object.fromEntries(combined.map((f) => [f.name, Math.round((f.feasibility / maxF) * 100)])),
+    },
+  ];
+
+  const COLORS = [
+    "hsl(220, 70%, 50%)",
+    "hsl(160, 60%, 45%)",
+    "hsl(280, 60%, 55%)",
+    "hsl(40, 90%, 50%)",
+    "hsl(0, 72%, 51%)",
+    "hsl(190, 70%, 45%)",
+  ];
+
   return (
     <div className="space-y-4 animate-fade-in">
+      {/* Radar Chart */}
+      {combined.length >= 2 && (
+        <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+          <h3 className="font-display font-semibold text-sm mb-3">DVF Comparison</h3>
+          <ResponsiveContainer width="100%" height={320}>
+            <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
+              <PolarGrid stroke="hsl(220, 15%, 90%)" />
+              <PolarAngleAxis
+                dataKey="dimension"
+                tick={{ fontSize: 12, fill: "hsl(220, 10%, 46%)" }}
+              />
+              <PolarRadiusAxis
+                angle={90}
+                domain={[0, 100]}
+                tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }}
+                tickFormatter={(v: number) => `${v}%`}
+              />
+              {combined.slice(0, 6).map((feat, i) => (
+                <Radar
+                  key={feat.name}
+                  name={feat.name}
+                  dataKey={feat.name}
+                  stroke={COLORS[i % COLORS.length]}
+                  fill={COLORS[i % COLORS.length]}
+                  fillOpacity={0.15}
+                  strokeWidth={2}
+                />
+              ))}
+              <Legend
+                wrapperStyle={{ fontSize: 12 }}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
       {/* Cards for each feature */}
       {combined.map((feat, i) => {
         const tier = tierBadge(feat.compositeScore);
