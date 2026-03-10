@@ -26,6 +26,7 @@ interface CombinedFeature {
   irr: number | null;
   pi: number | null;
   payback: number | null;
+  investment: number;
   compositeScore: number;
 }
 
