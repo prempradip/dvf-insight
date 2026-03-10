@@ -103,7 +103,7 @@ const Index = () => {
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {activeTab === "scoring" && (
+            {(activeTab === "scoring" || activeTab === "portfolio") && (
               <button
                 onClick={() => exportToCSV(rows)}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-secondary transition-colors"
