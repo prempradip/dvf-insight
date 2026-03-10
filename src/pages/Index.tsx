@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
 import { FinancialInputs, createEmptyFinancialInput } from "@/lib/financial-calc";
 import { exportToCSV } from "@/lib/export-csv";
@@ -8,7 +8,7 @@ import FinancialModelCard from "@/components/FinancialModelCard";
 import FinancialSummaryTable from "@/components/FinancialSummaryTable";
 import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Download } from "lucide-react";
+import { Plus, Download, Moon, Sun } from "lucide-react";
 
 const STORAGE_KEY = "dvf-calculator-rows";
 const FIN_STORAGE_KEY = "dvf-financial-inputs";
@@ -39,6 +39,19 @@ const Index = () => {
   const [rows, setRows] = useState<FeatureRow[]>(loadRows);
   const [financials, setFinancials] = useState<FinancialInputs[]>(loadFinancials);
   const [activeTab, setActiveTab] = useState("scoring");
+  const [dark, setDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("dvf-dark-mode");
+      if (saved !== null) return saved === "true";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("dvf-dark-mode", String(dark));
+  }, [dark]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
@@ -103,6 +116,13 @@ const Index = () => {
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => setDark((d) => !d)}
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {dark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
             {(activeTab === "scoring" || activeTab === "portfolio") && (
               <button
                 onClick={() => exportToCSV(rows)}
