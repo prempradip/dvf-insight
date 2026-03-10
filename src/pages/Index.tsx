@@ -6,6 +6,7 @@ import FeatureCard from "@/components/FeatureCard";
 import DVFSummaryTable from "@/components/DVFSummaryTable";
 import FinancialModelCard from "@/components/FinancialModelCard";
 import FinancialSummaryTable from "@/components/FinancialSummaryTable";
+import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Download } from "lucide-react";
 
@@ -102,7 +103,7 @@ const Index = () => {
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {activeTab === "scoring" && (
+            {(activeTab === "scoring" || activeTab === "portfolio") && (
               <button
                 onClick={() => exportToCSV(rows)}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-secondary transition-colors"
@@ -112,25 +113,28 @@ const Index = () => {
                 <span className="sm:hidden">CSV</span>
               </button>
             )}
-            <button
-              onClick={activeTab === "scoring" ? addRow : addFinancial}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              <Plus size={14} />
-              <span className="hidden sm:inline">
-                {activeTab === "scoring" ? "Add Feature" : "Add Model"}
-              </span>
-              <span className="sm:hidden">Add</span>
-            </button>
+            {activeTab !== "portfolio" && (
+              <button
+                onClick={activeTab === "scoring" ? addRow : addFinancial}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                <Plus size={14} />
+                <span className="hidden sm:inline">
+                  {activeTab === "scoring" ? "Add Feature" : "Add Model"}
+                </span>
+                <span className="sm:hidden">Add</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg">
             <TabsTrigger value="scoring">DVF Scoring</TabsTrigger>
-            <TabsTrigger value="financial">Financial Modelling</TabsTrigger>
+            <TabsTrigger value="financial">Financial Model</TabsTrigger>
+            <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
           </TabsList>
 
           <TabsContent value="scoring" className="space-y-4">
@@ -157,6 +161,10 @@ const Index = () => {
               />
             ))}
             <FinancialSummaryTable inputs={financials} />
+          </TabsContent>
+
+          <TabsContent value="portfolio" className="space-y-4">
+            <PortfolioView rows={rows} financials={financials} />
           </TabsContent>
         </Tabs>
       </main>
