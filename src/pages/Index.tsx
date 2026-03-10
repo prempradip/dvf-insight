@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
 import { FinancialInputs, createEmptyFinancialInput } from "@/lib/financial-calc";
 import { exportToCSV } from "@/lib/export-csv";
