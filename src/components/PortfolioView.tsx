@@ -161,6 +161,68 @@ const PortfolioView = ({ rows, financials }: Props) => {
         </div>
       )}
 
+      {/* Bubble Chart: DVF Score vs NPV, bubble size = investment */}
+      {(() => {
+        const bubbleFeatures = combined.filter((f) => f.npv !== null && f.investment > 0);
+        if (bubbleFeatures.length === 0) return null;
+        const maxInvestment = Math.max(...bubbleFeatures.map((f) => f.investment));
+        const bubbleData = bubbleFeatures.map((f) => ({
+          name: f.name,
+          dvf: f.dvfTotal,
+          npv: f.npv!,
+          investment: f.investment,
+          z: f.investment,
+        }));
+
+        return (
+          <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+            <h3 className="font-display font-semibold text-sm mb-1">DVF Score vs NPV</h3>
+            <p className="text-[10px] text-muted-foreground mb-3">Bubble size = initial investment</p>
+            <ResponsiveContainer width="100%" height={320}>
+              <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 90%)" />
+                <XAxis
+                  dataKey="dvf"
+                  type="number"
+                  name="DVF Score"
+                  domain={[0, MAX_DVF]}
+                  tick={{ fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
+                  label={{ value: "DVF Score", position: "bottom", offset: 0, fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
+                />
+                <YAxis
+                  dataKey="npv"
+                  type="number"
+                  name="NPV"
+                  tick={{ fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
+                  tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
+                  label={{ value: "NPV", angle: -90, position: "insideLeft", fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
+                />
+                <ZAxis dataKey="z" type="number" range={[80, 600]} domain={[0, maxInvestment]} />
+                <Tooltip
+                  content={({ payload }) => {
+                    if (!payload || payload.length === 0) return null;
+                    const d = payload[0].payload;
+                    return (
+                      <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-md text-xs">
+                        <div className="font-display font-semibold mb-1">{d.name}</div>
+                        <div>DVF: <span className="font-semibold">{d.dvf}</span></div>
+                        <div>NPV: <span className="font-semibold">{formatCurrency(d.npv)}</span></div>
+                        <div>Investment: <span className="font-semibold">{formatCurrency(d.investment)}</span></div>
+                      </div>
+                    );
+                  }}
+                />
+                <Scatter data={bubbleData}>
+                  {bubbleData.map((_, idx) => (
+                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} fillOpacity={0.7} stroke={COLORS[idx % COLORS.length]} />
+                  ))}
+                </Scatter>
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+        );
+      })()}
+
       {/* Cards for each feature */}
       {combined.map((feat, i) => {
         const tier = tierBadge(feat.compositeScore);
