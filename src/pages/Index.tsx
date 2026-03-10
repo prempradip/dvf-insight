@@ -39,6 +39,19 @@ const Index = () => {
   const [rows, setRows] = useState<FeatureRow[]>(loadRows);
   const [financials, setFinancials] = useState<FinancialInputs[]>(loadFinancials);
   const [activeTab, setActiveTab] = useState("scoring");
+  const [dark, setDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("dvf-dark-mode");
+      if (saved !== null) return saved === "true";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("dvf-dark-mode", String(dark));
+  }, [dark]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
