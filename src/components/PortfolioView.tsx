@@ -64,6 +64,7 @@ function buildCombined(rows: FeatureRow[], financials: FinancialInputs[]): Combi
         irr: results?.irr ?? null,
         pi: results?.profitabilityIndex ?? null,
         payback: results?.paybackPeriod ?? null,
+        investment: fin?.initialInvestment ?? 0,
         compositeScore,
       };
     })
