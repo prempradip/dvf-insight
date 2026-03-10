@@ -1,0 +1,173 @@
+import { FeatureRow, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
+import { FinancialInputs, calcAllFinancials } from "@/lib/financial-calc";
+
+interface Props {
+  rows: FeatureRow[];
+  financials: FinancialInputs[];
+}
+
+const formatCurrency = (v: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
+
+interface CombinedFeature {
+  name: string;
+  epic: string;
+  dvfTotal: number;
+  dvfPct: number;
+  desirability: number;
+  viability: number;
+  feasibility: number;
+  npv: number | null;
+  irr: number | null;
+  pi: number | null;
+  payback: number | null;
+  compositeScore: number;
+}
+
+const MAX_DVF = 12 * 21; // 12 criteria × max 21
+
+function buildCombined(rows: FeatureRow[], financials: FinancialInputs[]): CombinedFeature[] {
+  const finByFeatureId = new Map(
+    financials.filter((f) => f.featureId && f.initialInvestment > 0).map((f) => [f.featureId, f])
+  );
+
+  return rows
+    .filter((r) => r.name.trim() !== "")
+    .map((r) => {
+      const dvfTotal = calcTotal(r);
+      const dvfPct = dvfTotal / MAX_DVF;
+      const fin = finByFeatureId.get(r.id);
+      const results = fin ? calcAllFinancials(fin) : null;
+
+      // Composite: normalised DVF (0-1) * 50 + normalised PI (clamped 0-2 → 0-1) * 50
+      const piNorm = results ? Math.min(Math.max(results.profitabilityIndex / 2, 0), 1) : 0;
+      const hasFinancials = results !== null;
+      const compositeScore = hasFinancials
+        ? dvfPct * 50 + piNorm * 50
+        : dvfPct * 100;
+
+      return {
+        name: r.name,
+        epic: r.epic,
+        dvfTotal,
+        dvfPct,
+        desirability: calcCategoryTotal(r, "desirability"),
+        viability: calcCategoryTotal(r, "viability"),
+        feasibility: calcCategoryTotal(r, "feasibility"),
+        npv: results?.npv ?? null,
+        irr: results?.irr ?? null,
+        pi: results?.profitabilityIndex ?? null,
+        payback: results?.paybackPeriod ?? null,
+        compositeScore,
+      };
+    })
+    .sort((a, b) => b.compositeScore - a.compositeScore);
+}
+
+function tierColor(pct: number): string {
+  if (pct >= 70) return "text-accent";
+  if (pct >= 40) return "text-[hsl(var(--score-medium))]";
+  return "text-destructive";
+}
+
+function tierBadge(pct: number): { label: string; className: string } {
+  if (pct >= 70) return { label: "High", className: "bg-accent/15 text-accent" };
+  if (pct >= 40) return { label: "Medium", className: "bg-[hsl(var(--score-medium))]/15 text-[hsl(var(--score-medium))]" };
+  return { label: "Low", className: "bg-destructive/15 text-destructive" };
+}
+
+const PortfolioView = ({ rows, financials }: Props) => {
+  const combined = buildCombined(rows, financials);
+
+  if (combined.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-8 text-center text-muted-foreground text-sm animate-fade-in">
+        Add named features in the DVF Scoring tab to see the portfolio view.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4 animate-fade-in">
+      {/* Cards for each feature */}
+      {combined.map((feat, i) => {
+        const tier = tierBadge(feat.compositeScore);
+        const hasFinancials = feat.npv !== null;
+
+        return (
+          <div
+            key={feat.name + i}
+            className="rounded-xl border border-border bg-card shadow-sm overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 text-primary font-display font-bold text-xs flex items-center justify-center">
+                  {i + 1}
+                </span>
+                <div className="min-w-0">
+                  <h4 className="font-display font-semibold text-sm truncate">{feat.name}</h4>
+                  {feat.epic && (
+                    <span className="text-xs text-muted-foreground">{feat.epic}</span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${tier.className}`}>
+                  {tier.label}
+                </span>
+                <span className={`font-display font-bold text-lg ${tierColor(feat.compositeScore)}`}>
+                  {Math.round(feat.compositeScore)}
+                </span>
+              </div>
+            </div>
+
+            {/* Metrics grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-px bg-border">
+              <MetricCell label="DVF Score" value={`${feat.dvfTotal}/${MAX_DVF}`} sub={`${Math.round(feat.dvfPct * 100)}%`} />
+              <MetricCell label="Desirability" value={String(feat.desirability)} className="text-desirability" />
+              <MetricCell label="Viability" value={String(feat.viability)} className="text-viability" />
+              <MetricCell label="Feasibility" value={String(feat.feasibility)} className="text-feasibility" />
+              <MetricCell
+                label="NPV"
+                value={hasFinancials ? formatCurrency(feat.npv!) : "—"}
+                className={hasFinancials ? (feat.npv! >= 0 ? "text-accent" : "text-destructive") : ""}
+              />
+              <MetricCell
+                label="IRR"
+                value={feat.irr !== null ? `${feat.irr.toFixed(1)}%` : "—"}
+              />
+              <MetricCell
+                label="PI"
+                value={feat.pi !== null ? feat.pi.toFixed(2) : "—"}
+                className={feat.pi !== null ? (feat.pi >= 1 ? "text-accent" : "text-destructive") : ""}
+              />
+            </div>
+
+            {/* Composite bar */}
+            <div className="px-4 py-2.5">
+              <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-700"
+                  style={{ width: `${Math.min(feat.compositeScore, 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+function MetricCell({ label, value, sub, className = "" }: { label: string; value: string; sub?: string; className?: string }) {
+  return (
+    <div className="bg-card px-3 py-2.5 text-center">
+      <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-0.5">{label}</div>
+      <div className={`font-display font-semibold text-sm ${className}`}>{value}</div>
+      {sub && <div className="text-[10px] text-muted-foreground">{sub}</div>}
+    </div>
+  );
+}
+
+export default PortfolioView;
