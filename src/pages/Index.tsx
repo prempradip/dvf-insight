@@ -116,6 +116,13 @@ const Index = () => {
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => setDark((d) => !d)}
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {dark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
             {(activeTab === "scoring" || activeTab === "portfolio") && (
               <button
                 onClick={() => exportToCSV(rows)}
