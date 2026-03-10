@@ -6,6 +6,7 @@ import FeatureCard from "@/components/FeatureCard";
 import DVFSummaryTable from "@/components/DVFSummaryTable";
 import FinancialModelCard from "@/components/FinancialModelCard";
 import FinancialSummaryTable from "@/components/FinancialSummaryTable";
+import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Download } from "lucide-react";
 
