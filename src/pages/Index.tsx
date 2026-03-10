@@ -131,9 +131,10 @@ const Index = () => {
 
       <main className="max-w-5xl mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg">
             <TabsTrigger value="scoring">DVF Scoring</TabsTrigger>
-            <TabsTrigger value="financial">Financial Modelling</TabsTrigger>
+            <TabsTrigger value="financial">Financial Model</TabsTrigger>
+            <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
           </TabsList>
 
           <TabsContent value="scoring" className="space-y-4">
