@@ -8,7 +8,7 @@ import FinancialModelCard from "@/components/FinancialModelCard";
 import FinancialSummaryTable from "@/components/FinancialSummaryTable";
 import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Download } from "lucide-react";
+import { Plus, Download, Moon, Sun } from "lucide-react";
 
 const STORAGE_KEY = "dvf-calculator-rows";
 const FIN_STORAGE_KEY = "dvf-financial-inputs";
