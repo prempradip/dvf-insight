@@ -1,5 +1,6 @@
 import { FeatureRow, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
 import { FinancialInputs, calcAllFinancials } from "@/lib/financial-calc";
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 
 interface Props {
   rows: FeatureRow[];
