@@ -162,6 +162,10 @@ const Index = () => {
             ))}
             <FinancialSummaryTable inputs={financials} />
           </TabsContent>
+
+          <TabsContent value="portfolio" className="space-y-4">
+            <PortfolioView rows={rows} financials={financials} />
+          </TabsContent>
         </Tabs>
       </main>
     </div>
