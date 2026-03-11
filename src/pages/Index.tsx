@@ -193,6 +193,24 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
+              onClick={handleUndo}
+              disabled={activeTab === "scoring" ? !canUndoRows : activeTab === "financial" ? !canUndoFin : true}
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Undo"
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo2 size={16} />
+            </button>
+            <button
+              onClick={handleRedo}
+              disabled={activeTab === "scoring" ? !canRedoRows : activeTab === "financial" ? !canRedoFin : true}
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Redo"
+              title="Redo (Ctrl+Shift+Z)"
+            >
+              <Redo2 size={16} />
+            </button>
+            <button
               onClick={() => setShowShortcuts(true)}
               className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
               aria-label="Keyboard shortcuts"
