@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
+import { useUndoRedo } from "@/hooks/use-undo-redo";
 import { FinancialInputs, createEmptyFinancialInput } from "@/lib/financial-calc";
 import { exportToCSV } from "@/lib/export-csv";
 import SortableFeatureCard from "@/components/SortableFeatureCard";
@@ -8,7 +9,8 @@ import FinancialModelCard from "@/components/FinancialModelCard";
 import FinancialSummaryTable from "@/components/FinancialSummaryTable";
 import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Download, Moon, Sun, Keyboard } from "lucide-react";
+import { Plus, Download, Moon, Sun, Keyboard, Undo2, Redo2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import WelcomeModal from "@/components/WelcomeModal";
 import KeyboardShortcutsDialog from "@/components/KeyboardShortcutsDialog";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
@@ -54,8 +56,8 @@ function loadFinancials(): FinancialInputs[] {
 }
 
 const Index = () => {
-  const [rows, setRows] = useState<FeatureRow[]>(loadRows);
-  const [financials, setFinancials] = useState<FinancialInputs[]>(loadFinancials);
+  const { state: rows, set: setRows, undo: undoRows, redo: redoRows, canUndo: canUndoRows, canRedo: canRedoRows } = useUndoRedo<FeatureRow[]>(loadRows());
+  const { state: financials, set: setFinancials, undo: undoFin, redo: redoFin, canUndo: canUndoFin, canRedo: canRedoFin } = useUndoRedo<FinancialInputs[]>(loadFinancials());
   const [activeTab, setActiveTab] = useState("scoring");
   const [showShortcuts, setShowShortcuts] = useState(false);
 
@@ -146,6 +148,31 @@ const Index = () => {
   const addFinancial = () =>
     setFinancials((prev) => [...prev, createEmptyFinancialInput("", "")]);
 
+  const handleUndo = useCallback(() => {
+    if (activeTab === "scoring" && canUndoRows) { undoRows(); toast({ title: "Undo", description: "Reverted scoring change" }); }
+    else if (activeTab === "financial" && canUndoFin) { undoFin(); toast({ title: "Undo", description: "Reverted financial change" }); }
+  }, [activeTab, canUndoRows, canUndoFin, undoRows, undoFin]);
+
+  const handleRedo = useCallback(() => {
+    if (activeTab === "scoring" && canRedoRows) { redoRows(); toast({ title: "Redo", description: "Re-applied scoring change" }); }
+    else if (activeTab === "financial" && canRedoFin) { redoFin(); toast({ title: "Redo", description: "Re-applied financial change" }); }
+  }, [activeTab, canRedoRows, canRedoFin, redoRows, redoFin]);
+
+  // Ctrl+Z / Ctrl+Shift+Z global listener
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        if (e.shiftKey) handleRedo();
+        else handleUndo();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [handleUndo, handleRedo]);
+
   useKeyboardShortcuts({
     addItem: () => (activeTab === "scoring" ? addRow() : activeTab === "financial" ? addFinancial() : undefined),
     exportCSV: () => exportToCSV(rows),
@@ -165,6 +192,24 @@ const Index = () => {
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={handleUndo}
+              disabled={activeTab === "scoring" ? !canUndoRows : activeTab === "financial" ? !canUndoFin : true}
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Undo"
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo2 size={16} />
+            </button>
+            <button
+              onClick={handleRedo}
+              disabled={activeTab === "scoring" ? !canRedoRows : activeTab === "financial" ? !canRedoFin : true}
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Redo"
+              title="Redo (Ctrl+Shift+Z)"
+            >
+              <Redo2 size={16} />
+            </button>
             <button
               onClick={() => setShowShortcuts(true)}
               className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"

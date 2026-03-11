@@ -13,6 +13,8 @@ export const SHORTCUTS = [
   { keys: "N", label: "Add feature / model", section: "Actions" },
   { keys: "E", label: "Export CSV", section: "Actions" },
   { keys: "D", label: "Toggle dark mode", section: "Actions" },
+  { keys: "⌘Z", label: "Undo", section: "Actions" },
+  { keys: "⌘⇧Z", label: "Redo", section: "Actions" },
   { keys: "1", label: "DVF Scoring tab", section: "Navigation" },
   { keys: "2", label: "Financial Model tab", section: "Navigation" },
   { keys: "3", label: "Portfolio tab", section: "Navigation" },
