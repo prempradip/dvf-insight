@@ -157,6 +157,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <WelcomeModal />
+      <KeyboardShortcutsDialog open={showShortcuts} onOpenChange={setShowShortcuts} />
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="min-w-0">
@@ -164,6 +165,13 @@ const Index = () => {
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => setShowShortcuts(true)}
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
+              aria-label="Keyboard shortcuts"
+            >
+              <Keyboard size={16} />
+            </button>
             <button
               onClick={() => setDark((d) => !d)}
               className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
