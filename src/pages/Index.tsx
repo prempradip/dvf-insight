@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
 import { FinancialInputs, createEmptyFinancialInput } from "@/lib/financial-calc";
 import { exportToCSV } from "@/lib/export-csv";
-import FeatureCard from "@/components/FeatureCard";
+import SortableFeatureCard from "@/components/SortableFeatureCard";
 import DVFSummaryTable from "@/components/DVFSummaryTable";
 import FinancialModelCard from "@/components/FinancialModelCard";
 import FinancialSummaryTable from "@/components/FinancialSummaryTable";
@@ -10,6 +10,21 @@ import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Download, Moon, Sun } from "lucide-react";
 import WelcomeModal from "@/components/WelcomeModal";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 const STORAGE_KEY = "dvf-calculator-rows";
 const FIN_STORAGE_KEY = "dvf-financial-inputs";
@@ -49,6 +64,26 @@ const Index = () => {
     return false;
   });
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setRows((prev) => {
+        const oldIndex = prev.findIndex((r) => r.id === active.id);
+        const newIndex = prev.findIndex((r) => r.id === over.id);
+        if (oldIndex === -1 || newIndex === -1) return prev;
+        const next = [...prev];
+        const [moved] = next.splice(oldIndex, 1);
+        next.splice(newIndex, 0, moved);
+        return next;
+      });
+    }
+  }, []);
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("dvf-dark-mode", String(dark));
@@ -62,7 +97,6 @@ const Index = () => {
     localStorage.setItem(FIN_STORAGE_KEY, JSON.stringify(financials));
   }, [financials]);
 
-  // Sync financial models from DVF features
   useEffect(() => {
     setFinancials((prev) => {
       const namedRows = rows.filter((r) => r.name.trim() !== "");
@@ -160,16 +194,34 @@ const Index = () => {
           </TabsList>
 
           <TabsContent value="scoring" className="space-y-4">
-            {rows.map((row, i) => (
-              <FeatureCard
-                key={row.id}
-                row={row}
-                index={i}
-                onChange={(updated) => updateRow(row.id, updated)}
-                onDelete={() => deleteRow(row.id)}
-              />
-            ))}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis]}
+            >
+              <SortableContext items={rows.map((r) => r.id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-4">
+                  {rows.map((row, i) => (
+                    <SortableFeatureCard
+                      key={row.id}
+                      row={row}
+                      index={i}
+                      onChange={(updated) => updateRow(row.id, updated)}
+                      onDelete={() => deleteRow(row.id)}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
             <DVFSummaryTable rows={rows} />
+            <button
+              onClick={addRow}
+              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border py-4 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+            >
+              <Plus size={16} />
+              Add Feature
+            </button>
           </TabsContent>
 
           <TabsContent value="financial" className="space-y-4">
@@ -183,6 +235,13 @@ const Index = () => {
               />
             ))}
             <FinancialSummaryTable inputs={financials} />
+            <button
+              onClick={addFinancial}
+              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border py-4 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+            >
+              <Plus size={16} />
+              Add Model
+            </button>
           </TabsContent>
 
           <TabsContent value="portfolio" className="space-y-4">
