@@ -146,6 +146,14 @@ const Index = () => {
   const addFinancial = () =>
     setFinancials((prev) => [...prev, createEmptyFinancialInput("", "")]);
 
+  useKeyboardShortcuts({
+    addItem: () => (activeTab === "scoring" ? addRow() : activeTab === "financial" ? addFinancial() : undefined),
+    exportCSV: () => exportToCSV(rows),
+    toggleDark: () => setDark((d) => !d),
+    setTab: setActiveTab,
+    toggleHelp: () => setShowShortcuts((s) => !s),
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <WelcomeModal />
