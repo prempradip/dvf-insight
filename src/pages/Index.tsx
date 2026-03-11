@@ -8,8 +8,10 @@ import FinancialModelCard from "@/components/FinancialModelCard";
 import FinancialSummaryTable from "@/components/FinancialSummaryTable";
 import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Download, Moon, Sun } from "lucide-react";
+import { Plus, Download, Moon, Sun, Keyboard } from "lucide-react";
 import WelcomeModal from "@/components/WelcomeModal";
+import KeyboardShortcutsDialog from "@/components/KeyboardShortcutsDialog";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
   DndContext,
   closestCenter,
