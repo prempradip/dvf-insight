@@ -57,6 +57,8 @@ const Index = () => {
   const [rows, setRows] = useState<FeatureRow[]>(loadRows);
   const [financials, setFinancials] = useState<FinancialInputs[]>(loadFinancials);
   const [activeTab, setActiveTab] = useState("scoring");
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
   const [dark, setDark] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("dvf-dark-mode");
