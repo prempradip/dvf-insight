@@ -56,8 +56,8 @@ function loadFinancials(): FinancialInputs[] {
 }
 
 const Index = () => {
-  const [rows, setRows] = useState<FeatureRow[]>(loadRows);
-  const [financials, setFinancials] = useState<FinancialInputs[]>(loadFinancials);
+  const { state: rows, set: setRows, undo: undoRows, redo: redoRows, canUndo: canUndoRows, canRedo: canRedoRows } = useUndoRedo<FeatureRow[]>(loadRows());
+  const { state: financials, set: setFinancials, undo: undoFin, redo: redoFin, canUndo: canUndoFin, canRedo: canRedoFin } = useUndoRedo<FinancialInputs[]>(loadFinancials());
   const [activeTab, setActiveTab] = useState("scoring");
   const [showShortcuts, setShowShortcuts] = useState(false);
 
