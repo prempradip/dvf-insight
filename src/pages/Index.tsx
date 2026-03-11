@@ -148,6 +148,31 @@ const Index = () => {
   const addFinancial = () =>
     setFinancials((prev) => [...prev, createEmptyFinancialInput("", "")]);
 
+  const handleUndo = useCallback(() => {
+    if (activeTab === "scoring" && canUndoRows) { undoRows(); toast({ title: "Undo", description: "Reverted scoring change" }); }
+    else if (activeTab === "financial" && canUndoFin) { undoFin(); toast({ title: "Undo", description: "Reverted financial change" }); }
+  }, [activeTab, canUndoRows, canUndoFin, undoRows, undoFin]);
+
+  const handleRedo = useCallback(() => {
+    if (activeTab === "scoring" && canRedoRows) { redoRows(); toast({ title: "Redo", description: "Re-applied scoring change" }); }
+    else if (activeTab === "financial" && canRedoFin) { redoFin(); toast({ title: "Redo", description: "Re-applied financial change" }); }
+  }, [activeTab, canRedoRows, canRedoFin, redoRows, redoFin]);
+
+  // Ctrl+Z / Ctrl+Shift+Z global listener
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        if (e.shiftKey) handleRedo();
+        else handleUndo();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [handleUndo, handleRedo]);
+
   useKeyboardShortcuts({
     addItem: () => (activeTab === "scoring" ? addRow() : activeTab === "financial" ? addFinancial() : undefined),
     exportCSV: () => exportToCSV(rows),
