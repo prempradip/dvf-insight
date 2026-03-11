@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
+import { useUndoRedo } from "@/hooks/use-undo-redo";
 import { FinancialInputs, createEmptyFinancialInput } from "@/lib/financial-calc";
 import { exportToCSV } from "@/lib/export-csv";
 import SortableFeatureCard from "@/components/SortableFeatureCard";
