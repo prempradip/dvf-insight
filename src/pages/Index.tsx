@@ -9,6 +9,7 @@ import FinancialSummaryTable from "@/components/FinancialSummaryTable";
 import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Download, Moon, Sun } from "lucide-react";
+import WelcomeModal from "@/components/WelcomeModal";
 
 const STORAGE_KEY = "dvf-calculator-rows";
 const FIN_STORAGE_KEY = "dvf-financial-inputs";
@@ -109,6 +110,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <WelcomeModal />
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="min-w-0">
