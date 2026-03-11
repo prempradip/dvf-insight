@@ -8,8 +8,10 @@ import FinancialModelCard from "@/components/FinancialModelCard";
 import FinancialSummaryTable from "@/components/FinancialSummaryTable";
 import PortfolioView from "@/components/PortfolioView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Download, Moon, Sun } from "lucide-react";
+import { Plus, Download, Moon, Sun, Keyboard } from "lucide-react";
 import WelcomeModal from "@/components/WelcomeModal";
+import KeyboardShortcutsDialog from "@/components/KeyboardShortcutsDialog";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
   DndContext,
   closestCenter,
@@ -55,6 +57,8 @@ const Index = () => {
   const [rows, setRows] = useState<FeatureRow[]>(loadRows);
   const [financials, setFinancials] = useState<FinancialInputs[]>(loadFinancials);
   const [activeTab, setActiveTab] = useState("scoring");
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
   const [dark, setDark] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("dvf-dark-mode");
@@ -142,9 +146,18 @@ const Index = () => {
   const addFinancial = () =>
     setFinancials((prev) => [...prev, createEmptyFinancialInput("", "")]);
 
+  useKeyboardShortcuts({
+    addItem: () => (activeTab === "scoring" ? addRow() : activeTab === "financial" ? addFinancial() : undefined),
+    exportCSV: () => exportToCSV(rows),
+    toggleDark: () => setDark((d) => !d),
+    setTab: setActiveTab,
+    toggleHelp: () => setShowShortcuts((s) => !s),
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <WelcomeModal />
+      <KeyboardShortcutsDialog open={showShortcuts} onOpenChange={setShowShortcuts} />
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="min-w-0">
@@ -152,6 +165,13 @@ const Index = () => {
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => setShowShortcuts(true)}
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
+              aria-label="Keyboard shortcuts"
+            >
+              <Keyboard size={16} />
+            </button>
             <button
               onClick={() => setDark((d) => !d)}
               className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
