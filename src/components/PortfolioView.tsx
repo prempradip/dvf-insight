@@ -224,6 +224,16 @@ const PortfolioView = ({ rows, financials }: Props) => {
         );
       })()}
 
+      {/* Additional Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <DVFBreakdownChart features={combined} />
+        <CompositeRankingChart features={combined} />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <FinancialComparisonChart features={combined} />
+        <ScoreDistributionChart features={combined} />
+      </div>
+
       {/* Cards for each feature */}
       {combined.map((feat, i) => {
         const tier = tierBadge(feat.compositeScore);
