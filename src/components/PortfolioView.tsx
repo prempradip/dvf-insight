@@ -162,8 +162,58 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
   return (
     <div className="space-y-4 animate-fade-in">
+      {/* Chart Visibility Toggle */}
+      <div className="rounded-xl border border-border bg-card shadow-sm">
+        <button
+          onClick={() => setShowSettings((s) => !s)}
+          className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary/50 transition-colors rounded-xl"
+        >
+          <span className="flex items-center gap-2">
+            <Settings2 size={15} className="text-muted-foreground" />
+            Customize Charts
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {CHART_TYPES.filter((c) => visibleCharts[c.key]).length}/{CHART_TYPES.length} visible
+          </span>
+        </button>
+        {showSettings && (
+          <div className="px-4 pb-3 pt-1 border-t border-border">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-muted-foreground">Toggle charts on or off</p>
+              <button
+                onClick={() => {
+                  const newVal = !allVisible;
+                  setVisibleCharts(
+                    Object.fromEntries(CHART_TYPES.map((c) => [c.key, newVal])) as Record<ChartKey, boolean>
+                  );
+                }}
+                className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                {allVisible ? "Hide All" : "Show All"}
+              </button>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {CHART_TYPES.map((chart) => (
+                <button
+                  key={chart.key}
+                  onClick={() => toggleChart(chart.key)}
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-colors border ${
+                    visibleCharts[chart.key]
+                      ? "border-primary/30 bg-primary/10 text-primary"
+                      : "border-border bg-secondary/30 text-muted-foreground"
+                  }`}
+                >
+                  {visibleCharts[chart.key] ? <Eye size={13} /> : <EyeOff size={13} />}
+                  {chart.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Radar Chart */}
-      {combined.length >= 2 && (
+      {visibleCharts.radar && combined.length >= 2 && (
         <div className="rounded-xl border border-border bg-card shadow-sm p-4">
           <h3 className="font-display font-semibold text-sm mb-3">DVF Comparison</h3>
           <ResponsiveContainer width="100%" height={320}>
@@ -198,8 +248,8 @@ const PortfolioView = ({ rows, financials }: Props) => {
         </div>
       )}
 
-      {/* Bubble Chart: DVF Score vs NPV, bubble size = investment */}
-      {(() => {
+      {/* Bubble Chart */}
+      {visibleCharts.bubble && (() => {
         const bubbleFeatures = combined.filter((f) => f.npv !== null && f.investment > 0);
         if (bubbleFeatures.length === 0) return null;
         const maxInvestment = Math.max(...bubbleFeatures.map((f) => f.investment));
@@ -261,14 +311,18 @@ const PortfolioView = ({ rows, financials }: Props) => {
       })()}
 
       {/* Additional Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <DVFBreakdownChart features={combined} />
-        <CompositeRankingChart features={combined} />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <FinancialComparisonChart features={combined} />
-        <ScoreDistributionChart features={combined} />
-      </div>
+      {(visibleCharts.dvfBreakdown || visibleCharts.compositeRanking) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {visibleCharts.dvfBreakdown && <DVFBreakdownChart features={combined} />}
+          {visibleCharts.compositeRanking && <CompositeRankingChart features={combined} />}
+        </div>
+      )}
+      {(visibleCharts.financialComparison || visibleCharts.scoreDistribution) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {visibleCharts.financialComparison && <FinancialComparisonChart features={combined} />}
+          {visibleCharts.scoreDistribution && <ScoreDistributionChart features={combined} />}
+        </div>
+      )}
 
       {/* Cards for each feature */}
       {combined.map((feat, i) => {
