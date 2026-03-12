@@ -86,8 +86,42 @@ function tierBadge(pct: number): { label: string; className: string } {
   return { label: "Low", className: "bg-destructive/15 text-destructive" };
 }
 
+const CHART_TYPES = [
+  { key: "radar", label: "DVF Comparison" },
+  { key: "bubble", label: "DVF vs NPV Bubble" },
+  { key: "dvfBreakdown", label: "DVF Score Breakdown" },
+  { key: "compositeRanking", label: "Composite Ranking" },
+  { key: "financialComparison", label: "Financial Comparison" },
+  { key: "scoreDistribution", label: "Score Distribution" },
+] as const;
+
+type ChartKey = (typeof CHART_TYPES)[number]["key"];
+
+const CHART_STORAGE_KEY = "dvf-portfolio-charts";
+
+function loadChartVisibility(): Record<ChartKey, boolean> {
+  try {
+    const saved = localStorage.getItem(CHART_STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return Object.fromEntries(CHART_TYPES.map((c) => [c.key, true])) as Record<ChartKey, boolean>;
+}
+
 const PortfolioView = ({ rows, financials }: Props) => {
   const combined = buildCombined(rows, financials);
+  const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
+  const [showSettings, setShowSettings] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(CHART_STORAGE_KEY, JSON.stringify(visibleCharts));
+  }, [visibleCharts]);
+
+  const toggleChart = (key: ChartKey) => {
+    setVisibleCharts((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const allVisible = CHART_TYPES.every((c) => visibleCharts[c.key]);
+  const noneVisible = CHART_TYPES.every((c) => !visibleCharts[c.key]);
 
   if (combined.length === 0) {
     return (
