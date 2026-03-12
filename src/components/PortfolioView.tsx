@@ -5,6 +5,7 @@ import {
   ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell,
 } from "recharts";
+import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, CompositeRankingChart } from "./PortfolioCharts";
 
 interface Props {
   rows: FeatureRow[];
@@ -222,6 +223,16 @@ const PortfolioView = ({ rows, financials }: Props) => {
           </div>
         );
       })()}
+
+      {/* Additional Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <DVFBreakdownChart features={combined} />
+        <CompositeRankingChart features={combined} />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <FinancialComparisonChart features={combined} />
+        <ScoreDistributionChart features={combined} />
+      </div>
 
       {/* Cards for each feature */}
       {combined.map((feat, i) => {
