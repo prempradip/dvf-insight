@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { FeatureRow, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
 import { FinancialInputs, calcAllFinancials } from "@/lib/financial-calc";
 import {
@@ -6,6 +7,7 @@ import {
   ResponsiveContainer, Legend, Cell,
 } from "recharts";
 import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, CompositeRankingChart } from "./PortfolioCharts";
+import { Eye, EyeOff, Settings2 } from "lucide-react";
 
 interface Props {
   rows: FeatureRow[];
