@@ -35,25 +35,27 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
   return (
     <div className="rounded-xl border border-border bg-card shadow-sm animate-fade-in overflow-hidden">
       {/* Header */}
-      <div className="flex flex-wrap items-center gap-2 sm:gap-3 px-4 py-3 border-b border-border">
-        <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-bold font-display flex-shrink-0">
-          {index + 1}
-        </span>
-        <input
-          type="text"
-          placeholder="Epic / Category"
-          value={row.epic}
-          onChange={(e) => onChange({ ...row, epic: e.target.value })}
-          className="w-28 sm:w-32 bg-transparent border-b border-transparent hover:border-border focus:border-primary text-sm font-medium text-muted-foreground placeholder:text-muted-foreground/50 outline-none transition-colors flex-shrink-0"
-        />
-        <input
-          type="text"
-          placeholder="Feature name..."
-          value={row.name}
-          onChange={(e) => onChange({ ...row, name: e.target.value })}
-          className="flex-1 min-w-[120px] bg-transparent border-b border-transparent hover:border-border focus:border-primary text-sm font-semibold placeholder:text-muted-foreground/50 outline-none transition-colors"
-        />
-        <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3 border-b border-border">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-bold font-display flex-shrink-0">
+            {index + 1}
+          </span>
+          <input
+            type="text"
+            placeholder="Epic / Category"
+            value={row.epic}
+            onChange={(e) => onChange({ ...row, epic: e.target.value })}
+            className="w-24 sm:w-32 bg-transparent border-b border-transparent hover:border-border focus:border-primary text-sm font-medium text-muted-foreground placeholder:text-muted-foreground/50 outline-none transition-colors flex-shrink-0"
+          />
+          <input
+            type="text"
+            placeholder="Feature name..."
+            value={row.name}
+            onChange={(e) => onChange({ ...row, name: e.target.value })}
+            className="flex-1 min-w-0 bg-transparent border-b border-transparent hover:border-border focus:border-primary text-sm font-semibold placeholder:text-muted-foreground/50 outline-none transition-colors"
+          />
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
           <span className="font-display font-bold text-lg text-primary">{total}</span>
           <span className="text-xs text-muted-foreground">/ {maxTotal}</span>
           <button onClick={() => setExpanded(!expanded)} className="p-1.5 rounded-md hover:bg-secondary transition-colors text-muted-foreground">
@@ -66,9 +68,9 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
       </div>
 
       {expanded && (
-        <div className="p-4 space-y-5">
+        <div className="p-3 sm:p-4 space-y-4 sm:space-y-5">
           {/* Score badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2">
             {categories.map((cat) => {
               const critCount = CRITERIA.filter((c) => c.category === cat.key).length;
               return (
@@ -85,7 +87,7 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
           </div>
 
           {/* Criteria grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {categories.map((cat) => (
               <div key={cat.key} className="space-y-3">
                 <h4 className={`text-xs font-semibold uppercase tracking-wider ${categoryHeadingClasses[cat.key]} border-b border-border pb-2`}>
@@ -95,7 +97,7 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
                   {CRITERIA.filter((c) => c.category === cat.key).map((criterion) => (
                     <div key={criterion.id} className="space-y-1">
                       <label className="text-xs font-medium text-foreground/80 block">{criterion.label}</label>
-                      <p className="text-[10px] text-muted-foreground leading-tight min-h-[24px]">{criterion.description}</p>
+                      <p className="text-[10px] text-muted-foreground leading-tight min-h-[20px]">{criterion.description}</p>
                       <ScoreSelector
                         value={row.scores[criterion.id] ?? null}
                         onChange={(v) => updateScore(criterion.id, v)}

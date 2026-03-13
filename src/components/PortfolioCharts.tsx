@@ -29,31 +29,28 @@ const TIER_COLORS = [
   "hsl(0, 72%, 51%)",
 ];
 
-const formatCurrency = (v: number) =>
-  `$${(v / 1000).toFixed(0)}k`;
-
 /** Stacked bar: DVF breakdown per feature */
 export function DVFBreakdownChart({ features }: { features: CombinedFeature[] }) {
   const data = features.slice(0, 10).map((f) => ({
-    name: f.name.length > 12 ? f.name.slice(0, 12) + "…" : f.name,
+    name: f.name.length > 10 ? f.name.slice(0, 10) + "…" : f.name,
     Desirability: f.desirability,
     Viability: f.viability,
     Feasibility: f.feasibility,
   }));
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+    <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
       <h3 className="font-display font-semibold text-sm mb-1">DVF Score Breakdown</h3>
       <p className="text-[10px] text-muted-foreground mb-3">Stacked by category</p>
-      <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+      <ResponsiveContainer width="100%" height={260}>
+        <BarChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 90%)" />
-          <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} interval={0} angle={-20} textAnchor="end" height={50} />
-          <YAxis tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} />
+          <XAxis dataKey="name" tick={{ fontSize: 9, fill: "hsl(220, 10%, 46%)" }} interval={0} angle={-25} textAnchor="end" height={50} />
+          <YAxis tick={{ fontSize: 9, fill: "hsl(220, 10%, 46%)" }} width={30} />
           <Tooltip
             contentStyle={{ borderRadius: 8, border: "1px solid hsl(220,15%,90%)", fontSize: 12 }}
           />
-          <Legend wrapperStyle={{ fontSize: 11 }} />
+          <Legend wrapperStyle={{ fontSize: 10 }} />
           <Bar dataKey="Desirability" stackId="dvf" fill={COLORS.desirability} radius={[0, 0, 0, 0]} />
           <Bar dataKey="Viability" stackId="dvf" fill={COLORS.viability} />
           <Bar dataKey="Feasibility" stackId="dvf" fill={COLORS.feasibility} radius={[4, 4, 0, 0]} />
@@ -69,25 +66,25 @@ export function FinancialComparisonChart({ features }: { features: CombinedFeatu
   if (withFinancials.length === 0) return null;
 
   const data = withFinancials.map((f) => ({
-    name: f.name.length > 14 ? f.name.slice(0, 14) + "…" : f.name,
+    name: f.name.length > 12 ? f.name.slice(0, 12) + "…" : f.name,
     NPV: Math.round(f.npv! / 1000),
     Investment: Math.round(f.investment / 1000),
   }));
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+    <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
       <h3 className="font-display font-semibold text-sm mb-1">Financial Comparison</h3>
       <p className="text-[10px] text-muted-foreground mb-3">NPV vs Investment (in $k)</p>
-      <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 5 }}>
+      <ResponsiveContainer width="100%" height={260}>
+        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 90%)" />
-          <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} tickFormatter={(v) => `$${v}k`} />
-          <YAxis dataKey="name" type="category" width={90} tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} />
+          <XAxis type="number" tick={{ fontSize: 9, fill: "hsl(220, 10%, 46%)" }} tickFormatter={(v) => `$${v}k`} />
+          <YAxis dataKey="name" type="category" width={70} tick={{ fontSize: 9, fill: "hsl(220, 10%, 46%)" }} />
           <Tooltip
             contentStyle={{ borderRadius: 8, border: "1px solid hsl(220,15%,90%)", fontSize: 12 }}
             formatter={(value: number) => [`$${value}k`]}
           />
-          <Legend wrapperStyle={{ fontSize: 11 }} />
+          <Legend wrapperStyle={{ fontSize: 10 }} />
           <Bar dataKey="NPV" fill="hsl(160, 60%, 45%)" radius={[0, 4, 4, 0]} />
           <Bar dataKey="Investment" fill="hsl(220, 70%, 50%)" radius={[0, 4, 4, 0]} />
         </BarChart>
@@ -111,7 +108,7 @@ export function ScoreDistributionChart({ features }: { features: CombinedFeature
   if (data.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+    <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
       <h3 className="font-display font-semibold text-sm mb-1">Score Distribution</h3>
       <p className="text-[10px] text-muted-foreground mb-3">Features by composite tier</p>
       <ResponsiveContainer width="100%" height={220}>
@@ -120,11 +117,12 @@ export function ScoreDistributionChart({ features }: { features: CombinedFeature
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={55}
-            outerRadius={85}
+            innerRadius={45}
+            outerRadius={75}
             paddingAngle={3}
             dataKey="value"
             label={({ name, value }) => `${name}: ${value}`}
+            labelLine={{ strokeWidth: 1 }}
           >
             {data.map((_, i) => {
               const colorIdx = data[i].name.startsWith("High") ? 0 : data[i].name.startsWith("Medium") ? 1 : 2;
@@ -141,7 +139,7 @@ export function ScoreDistributionChart({ features }: { features: CombinedFeature
 /** Composite score ranking bar */
 export function CompositeRankingChart({ features }: { features: CombinedFeature[] }) {
   const data = features.slice(0, 10).map((f) => ({
-    name: f.name.length > 14 ? f.name.slice(0, 14) + "…" : f.name,
+    name: f.name.length > 12 ? f.name.slice(0, 12) + "…" : f.name,
     score: Math.round(f.compositeScore),
     fill: f.compositeScore >= 70
       ? "hsl(160, 60%, 45%)"
@@ -151,14 +149,14 @@ export function CompositeRankingChart({ features }: { features: CombinedFeature[
   }));
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+    <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
       <h3 className="font-display font-semibold text-sm mb-1">Composite Score Ranking</h3>
       <p className="text-[10px] text-muted-foreground mb-3">Top features by combined DVF + financial score</p>
-      <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 5 }}>
+      <ResponsiveContainer width="100%" height={260}>
+        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 90%)" />
-          <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} />
-          <YAxis dataKey="name" type="category" width={90} tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }} />
+          <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 9, fill: "hsl(220, 10%, 46%)" }} />
+          <YAxis dataKey="name" type="category" width={70} tick={{ fontSize: 9, fill: "hsl(220, 10%, 46%)" }} />
           <Tooltip
             contentStyle={{ borderRadius: 8, border: "1px solid hsl(220,15%,90%)", fontSize: 12 }}
             formatter={(value: number) => [`${value}/100`]}

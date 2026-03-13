@@ -33,7 +33,7 @@ interface CombinedFeature {
   compositeScore: number;
 }
 
-const MAX_DVF = 12 * 21; // 12 criteria × max 21
+const MAX_DVF = 12 * 21;
 
 function buildCombined(rows: FeatureRow[], financials: FinancialInputs[]): CombinedFeature[] {
   const finByFeatureId = new Map(
@@ -48,7 +48,6 @@ function buildCombined(rows: FeatureRow[], financials: FinancialInputs[]): Combi
       const fin = finByFeatureId.get(r.id);
       const results = fin ? calcAllFinancials(fin) : null;
 
-      // Composite: normalised DVF (0-1) * 50 + normalised PI (clamped 0-2 → 0-1) * 50
       const piNorm = results ? Math.min(Math.max(results.profitabilityIndex / 2, 0), 1) : 0;
       const hasFinancials = results !== null;
       const compositeScore = hasFinancials
@@ -121,7 +120,6 @@ const PortfolioView = ({ rows, financials }: Props) => {
   };
 
   const allVisible = CHART_TYPES.every((c) => visibleCharts[c.key]);
-  const noneVisible = CHART_TYPES.every((c) => !visibleCharts[c.key]);
 
   if (combined.length === 0) {
     return (
@@ -131,7 +129,6 @@ const PortfolioView = ({ rows, financials }: Props) => {
     );
   }
 
-  // Max per category: Desirability=4 criteria, Viability=4, Feasibility=4, each max 21
   const maxD = 4 * 21;
   const maxV = 4 * 21;
   const maxF = 4 * 21;
@@ -192,7 +189,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
                 {allVisible ? "Hide All" : "Show All"}
               </button>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2">
               {CHART_TYPES.map((chart) => (
                 <button
                   key={chart.key}
@@ -204,7 +201,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
                   }`}
                 >
                   {visibleCharts[chart.key] ? <Eye size={13} /> : <EyeOff size={13} />}
-                  {chart.label}
+                  <span className="truncate">{chart.label}</span>
                 </button>
               ))}
             </div>
@@ -214,19 +211,19 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
       {/* Radar Chart */}
       {visibleCharts.radar && combined.length >= 2 && (
-        <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+        <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
           <h3 className="font-display font-semibold text-sm mb-3">DVF Comparison</h3>
-          <ResponsiveContainer width="100%" height={320}>
-            <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
+          <ResponsiveContainer width="100%" height={280}>
+            <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
               <PolarGrid stroke="hsl(220, 15%, 90%)" />
               <PolarAngleAxis
                 dataKey="dimension"
-                tick={{ fontSize: 12, fill: "hsl(220, 10%, 46%)" }}
+                tick={{ fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
               />
               <PolarRadiusAxis
                 angle={90}
                 domain={[0, 100]}
-                tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }}
+                tick={{ fontSize: 9, fill: "hsl(220, 10%, 46%)" }}
                 tickFormatter={(v: number) => `${v}%`}
               />
               {combined.slice(0, 6).map((feat, i) => (
@@ -240,9 +237,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
                   strokeWidth={2}
                 />
               ))}
-              <Legend
-                wrapperStyle={{ fontSize: 12 }}
-              />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
             </RadarChart>
           </ResponsiveContainer>
         </div>
@@ -262,29 +257,29 @@ const PortfolioView = ({ rows, financials }: Props) => {
         }));
 
         return (
-          <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+          <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
             <h3 className="font-display font-semibold text-sm mb-1">DVF Score vs NPV</h3>
             <p className="text-[10px] text-muted-foreground mb-3">Bubble size = initial investment</p>
-            <ResponsiveContainer width="100%" height={320}>
-              <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
+            <ResponsiveContainer width="100%" height={280}>
+              <ScatterChart margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 90%)" />
                 <XAxis
                   dataKey="dvf"
                   type="number"
                   name="DVF Score"
                   domain={[0, MAX_DVF]}
-                  tick={{ fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
-                  label={{ value: "DVF Score", position: "bottom", offset: 0, fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
+                  tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }}
+                  label={{ value: "DVF Score", position: "bottom", offset: 0, fontSize: 10, fill: "hsl(220, 10%, 46%)" }}
                 />
                 <YAxis
                   dataKey="npv"
                   type="number"
                   name="NPV"
-                  tick={{ fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
+                  tick={{ fontSize: 10, fill: "hsl(220, 10%, 46%)" }}
                   tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
-                  label={{ value: "NPV", angle: -90, position: "insideLeft", fontSize: 11, fill: "hsl(220, 10%, 46%)" }}
+                  width={50}
                 />
-                <ZAxis dataKey="z" type="number" range={[80, 600]} domain={[0, maxInvestment]} />
+                <ZAxis dataKey="z" type="number" range={[60, 400]} domain={[0, maxInvestment]} />
                 <Tooltip
                   content={({ payload }) => {
                     if (!payload || payload.length === 0) return null;
@@ -335,8 +330,8 @@ const PortfolioView = ({ rows, financials }: Props) => {
             className="rounded-xl border border-border bg-card shadow-sm overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center justify-between px-3 sm:px-4 py-3 border-b border-border gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 text-primary font-display font-bold text-xs flex items-center justify-center">
                   {i + 1}
                 </span>
@@ -348,16 +343,16 @@ const PortfolioView = ({ rows, financials }: Props) => {
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${tier.className}`}>
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${tier.className} hidden sm:inline`}>
                   {tier.label}
                 </span>
-                <span className={`font-display font-bold text-lg ${tierColor(feat.compositeScore)}`}>
+                <span className={`font-display font-bold text-base sm:text-lg ${tierColor(feat.compositeScore)}`}>
                   {Math.round(feat.compositeScore)}
                 </span>
               </div>
             </div>
 
-            {/* Metrics grid */}
+            {/* Metrics grid - responsive */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-px bg-border">
               <MetricCell label="DVF Score" value={`${feat.dvfTotal}/${MAX_DVF}`} sub={`${Math.round(feat.dvfPct * 100)}%`} />
               <MetricCell label="Desirability" value={String(feat.desirability)} className="text-desirability" />
@@ -380,7 +375,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
             </div>
 
             {/* Composite bar */}
-            <div className="px-4 py-2.5">
+            <div className="px-3 sm:px-4 py-2.5">
               <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
                 <div
                   className="h-full rounded-full bg-primary transition-all duration-700"
@@ -397,9 +392,9 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
 function MetricCell({ label, value, sub, className = "" }: { label: string; value: string; sub?: string; className?: string }) {
   return (
-    <div className="bg-card px-3 py-2.5 text-center">
-      <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-0.5">{label}</div>
-      <div className={`font-display font-semibold text-sm ${className}`}>{value}</div>
+    <div className="bg-card px-2 sm:px-3 py-2 sm:py-2.5 text-center">
+      <div className="text-[9px] sm:text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-0.5 truncate">{label}</div>
+      <div className={`font-display font-semibold text-xs sm:text-sm ${className}`}>{value}</div>
       {sub && <div className="text-[10px] text-muted-foreground">{sub}</div>}
     </div>
   );
