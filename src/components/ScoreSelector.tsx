@@ -1,4 +1,4 @@
-import { ScoreValue, SCORE_OPTIONS, INVERTED_SCORE_OPTIONS, CRITERION_LABELS } from "@/lib/dvf-data";
+import { ScoreValue, SCORE_OPTIONS, INVERTED_SCORE_OPTIONS, CRITERION_LABELS, FEASIBILITY_LABELS } from "@/lib/dvf-data";
 
 interface ScoreSelectorProps {
   value: ScoreValue | null;
@@ -8,7 +8,9 @@ interface ScoreSelectorProps {
 }
 
 const ScoreSelector = ({ value, onChange, inverted = false, criterionId }: ScoreSelectorProps) => {
-  const options = inverted ? INVERTED_SCORE_OPTIONS : (criterionId && CRITERION_LABELS[criterionId]) || SCORE_OPTIONS;
+  const options = criterionId
+    ? (inverted ? FEASIBILITY_LABELS[criterionId] : CRITERION_LABELS[criterionId]) || (inverted ? INVERTED_SCORE_OPTIONS : SCORE_OPTIONS)
+    : inverted ? INVERTED_SCORE_OPTIONS : SCORE_OPTIONS;
 
   return (
     <select

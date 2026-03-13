@@ -84,6 +84,38 @@ export const INVERTED_SCORE_OPTIONS: { value: ScoreValue; label: string }[] = [
   { value: 0, label: "Very Hard" },
 ];
 
+// Criterion-specific labels for Feasibility (inverted)
+export const FEASIBILITY_LABELS: Record<string, { value: ScoreValue; label: string }[]> = {
+  people: [
+    { value: 21, label: "Existing Team Ready" },
+    { value: 13, label: "Minor Upskilling" },
+    { value: 8, label: "Some Hiring Needed" },
+    { value: 5, label: "Specialist Recruitment" },
+    { value: 0, label: "No Capability In-House" },
+  ],
+  process_risk: [
+    { value: 21, label: "Zero Risk Exposure" },
+    { value: 13, label: "Well-Mitigated" },
+    { value: 8, label: "Manageable Risk" },
+    { value: 5, label: "Significant Exposure" },
+    { value: 0, label: "Critical Risk" },
+  ],
+  change_tech: [
+    { value: 21, label: "Plug & Play" },
+    { value: 13, label: "Minor Integration" },
+    { value: 8, label: "Moderate Build" },
+    { value: 5, label: "Major Platform Change" },
+    { value: 0, label: "Full Re-Architecture" },
+  ],
+  effort: [
+    { value: 21, label: "Quick Win (Days)" },
+    { value: 13, label: "Small Project (Weeks)" },
+    { value: 8, label: "Medium Initiative (Months)" },
+    { value: 5, label: "Large Programme (Quarters)" },
+    { value: 0, label: "Multi-Year Transformation" },
+  ],
+};
+
 export const CRITERIA: Criterion[] = [
   { id: "student_needs", label: "Meet Student Needs", description: "Simplicity (student NPS)", category: "desirability", inverted: false },
   { id: "business_goals", label: "Meet Business Goals", description: "FY Strategy, lead creation, lead scoring, consistency, Business Scalability", category: "desirability", inverted: false },
