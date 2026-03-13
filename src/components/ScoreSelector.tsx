@@ -16,7 +16,7 @@ const ScoreSelector = ({ value, onChange, inverted = false, criterionId }: Score
     <select
       value={value ?? ""}
       onChange={(e) => onChange(Number(e.target.value) as ScoreValue)}
-      className="w-full rounded-md border border-border bg-card px-2 py-1.5 text-sm font-body text-card-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition-colors cursor-pointer"
+      className="w-full rounded-md border border-border bg-card px-2 py-1.5 text-xs sm:text-sm font-body text-card-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition-colors cursor-pointer truncate"
     >
       <option value="" disabled>—</option>
       {options.map((opt) => (
