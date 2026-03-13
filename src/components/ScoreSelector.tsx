@@ -1,13 +1,14 @@
-import { ScoreValue, SCORE_OPTIONS, INVERTED_SCORE_OPTIONS } from "@/lib/dvf-data";
+import { ScoreValue, SCORE_OPTIONS, INVERTED_SCORE_OPTIONS, CRITERION_LABELS } from "@/lib/dvf-data";
 
 interface ScoreSelectorProps {
   value: ScoreValue | null;
   onChange: (value: ScoreValue) => void;
   inverted?: boolean;
+  criterionId?: string;
 }
 
-const ScoreSelector = ({ value, onChange, inverted = false }: ScoreSelectorProps) => {
-  const options = inverted ? INVERTED_SCORE_OPTIONS : SCORE_OPTIONS;
+const ScoreSelector = ({ value, onChange, inverted = false, criterionId }: ScoreSelectorProps) => {
+  const options = inverted ? INVERTED_SCORE_OPTIONS : (criterionId && CRITERION_LABELS[criterionId]) || SCORE_OPTIONS;
 
   return (
     <select

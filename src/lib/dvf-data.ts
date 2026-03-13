@@ -16,6 +16,66 @@ export const SCORE_OPTIONS: { value: ScoreValue; label: string }[] = [
   { value: 21, label: "Critical" },
 ];
 
+// Criterion-specific labels for Desirability & Viability
+export const CRITERION_LABELS: Record<string, { value: ScoreValue; label: string }[]> = {
+  student_needs: [
+    { value: 0, label: "No Student Benefit" },
+    { value: 5, label: "Nice to Have" },
+    { value: 8, label: "Improves Experience" },
+    { value: 13, label: "High Satisfaction Driver" },
+    { value: 21, label: "Must-Have for Students" },
+  ],
+  business_goals: [
+    { value: 0, label: "No Strategic Fit" },
+    { value: 5, label: "Loosely Aligned" },
+    { value: 8, label: "Supports a KPI" },
+    { value: 13, label: "Drives Key Strategy" },
+    { value: 21, label: "Mission-Critical" },
+  ],
+  client_needs: [
+    { value: 0, label: "No Client Value" },
+    { value: 5, label: "Minor Improvement" },
+    { value: 8, label: "Boosts Lead Quality" },
+    { value: 13, label: "Strong Conversion Lift" },
+    { value: 21, label: "Transformative for Clients" },
+  ],
+  competitiveness: [
+    { value: 0, label: "No Market Impact" },
+    { value: 5, label: "Keeps Parity" },
+    { value: 8, label: "Slight Edge" },
+    { value: 13, label: "Clear Differentiator" },
+    { value: 21, label: "Category-Defining" },
+  ],
+  revenue: [
+    { value: 0, label: "No Revenue Effect" },
+    { value: 5, label: "Marginal Uplift" },
+    { value: 8, label: "Measurable Growth" },
+    { value: 13, label: "Significant Revenue Driver" },
+    { value: 21, label: "Step-Change in Revenue" },
+  ],
+  cost_optimisation: [
+    { value: 0, label: "No Cost Saving" },
+    { value: 5, label: "Minor Saving" },
+    { value: 8, label: "Noticeable Reduction" },
+    { value: 13, label: "Major Cost Avoidance" },
+    { value: 21, label: "Eliminates Cost Centre" },
+  ],
+  efficiency: [
+    { value: 0, label: "No Productivity Gain" },
+    { value: 5, label: "Saves Minutes" },
+    { value: 8, label: "Saves Hours Weekly" },
+    { value: 13, label: "Frees Up Headcount" },
+    { value: 21, label: "Fully Automates Process" },
+  ],
+  enps: [
+    { value: 0, label: "No Engagement Impact" },
+    { value: 5, label: "Slight Morale Boost" },
+    { value: 8, label: "Reduces Friction" },
+    { value: 13, label: "Staff Advocacy Driver" },
+    { value: 21, label: "Culture-Shaping" },
+  ],
+};
+
 export const INVERTED_SCORE_OPTIONS: { value: ScoreValue; label: string }[] = [
   { value: 21, label: "Very Easy" },
   { value: 13, label: "Easy" },

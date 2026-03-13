@@ -100,6 +100,7 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
                         value={row.scores[criterion.id] ?? null}
                         onChange={(v) => updateScore(criterion.id, v)}
                         inverted={criterion.inverted}
+                        criterionId={criterion.id}
                       />
                     </div>
                   ))}
