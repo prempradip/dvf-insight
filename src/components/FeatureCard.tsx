@@ -3,7 +3,7 @@ import ScoreSelector from "./ScoreSelector";
 import ScoreBadge from "./ScoreBadge";
 import { Trash2, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { useState } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface FeatureCardProps {
   row: FeatureRow;
