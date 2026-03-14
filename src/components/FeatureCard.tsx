@@ -1,7 +1,8 @@
 import { FeatureRow, CRITERIA, ScoreValue, calcTotal, calcCategoryTotal, CRITERION_LABELS, FEASIBILITY_LABELS, SCORE_OPTIONS, INVERTED_SCORE_OPTIONS } from "@/lib/dvf-data";
 import ScoreSelector from "./ScoreSelector";
 import ScoreBadge from "./ScoreBadge";
-import { Trash2, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Info, X } from "lucide-react";
+import { PopoverClose } from "@radix-ui/react-popover";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
@@ -109,8 +110,11 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
                                 <Info size={12} className="text-muted-foreground/60 hover:text-muted-foreground cursor-help flex-shrink-0" />
                               </button>
                             </PopoverTrigger>
-                            <PopoverContent side="top" className="max-w-[220px] p-2 w-auto">
-                              <p className="text-[11px] font-medium mb-1">{criterion.label}</p>
+                            <PopoverContent side="top" className="max-w-[220px] p-2 w-auto relative">
+                              <PopoverClose className="absolute top-1 right-1 p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                                <X size={12} />
+                              </PopoverClose>
+                              <p className="text-[11px] font-medium mb-1 pr-4">{criterion.label}</p>
                               <ul className="space-y-0.5">
                                 {labels.map((opt) => (
                                   <li key={opt.value} className="text-[10px] text-muted-foreground">
