@@ -1,7 +1,8 @@
 import { FeatureRow, CRITERIA, ScoreValue, calcTotal, calcCategoryTotal, CRITERION_LABELS, FEASIBILITY_LABELS, SCORE_OPTIONS, INVERTED_SCORE_OPTIONS } from "@/lib/dvf-data";
 import ScoreSelector from "./ScoreSelector";
 import ScoreBadge from "./ScoreBadge";
-import { Trash2, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Info, X } from "lucide-react";
+import { PopoverClose } from "@radix-ui/react-popover";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
