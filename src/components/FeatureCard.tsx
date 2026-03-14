@@ -3,7 +3,7 @@ import ScoreSelector from "./ScoreSelector";
 import ScoreBadge from "./ScoreBadge";
 import { Trash2, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { useState } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface FeatureCardProps {
   row: FeatureRow;
@@ -103,23 +103,23 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
                       <div key={criterion.id} className="space-y-1">
                         <div className="flex items-center gap-1">
                           <label className="text-xs font-medium text-foreground/80">{criterion.label}</label>
-                          <TooltipProvider delayDuration={200}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button type="button" className="touch-manipulation">
                                 <Info size={12} className="text-muted-foreground/60 hover:text-muted-foreground cursor-help flex-shrink-0" />
-                              </TooltipTrigger>
-                              <TooltipContent side="top" className="max-w-[220px] p-2">
-                                <p className="text-[11px] font-medium mb-1">{criterion.label}</p>
-                                <ul className="space-y-0.5">
-                                  {labels.map((opt) => (
-                                    <li key={opt.value} className="text-[10px] text-muted-foreground">
-                                      <span className="font-semibold text-foreground">{opt.value}</span> — {opt.label}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent side="top" className="max-w-[220px] p-2 w-auto">
+                              <p className="text-[11px] font-medium mb-1">{criterion.label}</p>
+                              <ul className="space-y-0.5">
+                                {labels.map((opt) => (
+                                  <li key={opt.value} className="text-[10px] text-muted-foreground">
+                                    <span className="font-semibold text-foreground">{opt.value}</span> — {opt.label}
+                                  </li>
+                                ))}
+                              </ul>
+                            </PopoverContent>
+                          </Popover>
                         </div>
                         <p className="text-[10px] text-muted-foreground leading-tight min-h-[20px]">{criterion.description}</p>
                         <ScoreSelector
