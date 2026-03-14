@@ -1,8 +1,9 @@
-import { FeatureRow, CRITERIA, ScoreValue, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
+import { FeatureRow, CRITERIA, ScoreValue, calcTotal, calcCategoryTotal, CRITERION_LABELS, FEASIBILITY_LABELS, SCORE_OPTIONS, INVERTED_SCORE_OPTIONS } from "@/lib/dvf-data";
 import ScoreSelector from "./ScoreSelector";
 import ScoreBadge from "./ScoreBadge";
-import { Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { useState } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface FeatureCardProps {
   row: FeatureRow;
@@ -94,18 +95,42 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
                   {cat.label}
                 </h4>
                 <div className="space-y-3">
-                  {CRITERIA.filter((c) => c.category === cat.key).map((criterion) => (
-                    <div key={criterion.id} className="space-y-1">
-                      <label className="text-xs font-medium text-foreground/80 block">{criterion.label}</label>
-                      <p className="text-[10px] text-muted-foreground leading-tight min-h-[20px]">{criterion.description}</p>
-                      <ScoreSelector
-                        value={row.scores[criterion.id] ?? null}
-                        onChange={(v) => updateScore(criterion.id, v)}
-                        inverted={criterion.inverted}
-                        criterionId={criterion.id}
-                      />
-                    </div>
-                  ))}
+                  {CRITERIA.filter((c) => c.category === cat.key).map((criterion) => {
+                    const labels = criterion.inverted
+                      ? (FEASIBILITY_LABELS[criterion.id] || INVERTED_SCORE_OPTIONS)
+                      : (CRITERION_LABELS[criterion.id] || SCORE_OPTIONS);
+                    return (
+                      <div key={criterion.id} className="space-y-1">
+                        <div className="flex items-center gap-1">
+                          <label className="text-xs font-medium text-foreground/80">{criterion.label}</label>
+                          <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info size={12} className="text-muted-foreground/60 hover:text-muted-foreground cursor-help flex-shrink-0" />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-[220px] p-2">
+                                <p className="text-[11px] font-medium mb-1">{criterion.label}</p>
+                                <ul className="space-y-0.5">
+                                  {labels.map((opt) => (
+                                    <li key={opt.value} className="text-[10px] text-muted-foreground">
+                                      <span className="font-semibold text-foreground">{opt.value}</span> — {opt.label}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground leading-tight min-h-[20px]">{criterion.description}</p>
+                        <ScoreSelector
+                          value={row.scores[criterion.id] ?? null}
+                          onChange={(v) => updateScore(criterion.id, v)}
+                          inverted={criterion.inverted}
+                          criterionId={criterion.id}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}
