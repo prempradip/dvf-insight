@@ -212,7 +212,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
       {/* Radar Chart */}
       {visibleCharts.radar && combined.length >= 2 && (
-        <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
+        <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="font-display font-semibold text-sm mb-3">DVF Comparison</h3>
           <ResponsiveContainer width="100%" height={280}>
             <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
