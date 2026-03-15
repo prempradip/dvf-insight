@@ -258,7 +258,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
         }));
 
         return (
-          <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
+          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
             <h3 className="font-display font-semibold text-sm mb-1">DVF Score vs NPV</h3>
             <p className="text-[10px] text-muted-foreground mb-3">Bubble size = initial investment</p>
             <ResponsiveContainer width="100%" height={280}>
