@@ -38,7 +38,7 @@ const FinancialModelCard = ({ input, index, onChange, onDelete }: Props) => {
   const piGood = results.profitabilityIndex >= 1;
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm animate-fade-in overflow-hidden">
+    <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden animate-fade-in hover-lift" style={{ boxShadow: 'var(--shadow-card)' }}>
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3 px-4 py-3 border-b border-border">
         <span className="flex items-center justify-center w-7 h-7 rounded-full bg-accent/10 text-accent text-xs font-bold font-display flex-shrink-0">
