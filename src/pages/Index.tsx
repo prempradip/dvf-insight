@@ -195,7 +195,7 @@ const Index = () => {
             <button
               onClick={handleUndo}
               disabled={activeTab === "scoring" ? !canUndoRows : activeTab === "financial" ? !canUndoFin : true}
-              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-8 h-8 sm:w-9 sm:h-9 text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/10 w-8 h-8 sm:w-9 sm:h-9 text-white/80 hover:bg-white/20 hover:text-white transition-colors disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Undo"
               title="Undo (Ctrl+Z)"
             >
@@ -204,7 +204,7 @@ const Index = () => {
             <button
               onClick={handleRedo}
               disabled={activeTab === "scoring" ? !canRedoRows : activeTab === "financial" ? !canRedoFin : true}
-              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-8 h-8 sm:w-9 sm:h-9 text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/10 w-8 h-8 sm:w-9 sm:h-9 text-white/80 hover:bg-white/20 hover:text-white transition-colors disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Redo"
               title="Redo (Ctrl+Shift+Z)"
             >
@@ -212,14 +212,14 @@ const Index = () => {
             </button>
             <button
               onClick={() => setShowShortcuts(true)}
-              className="hidden sm:inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
+              className="hidden sm:inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/10 w-9 h-9 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
               aria-label="Keyboard shortcuts"
             >
               <Keyboard size={16} />
             </button>
             <button
               onClick={() => setDark((d) => !d)}
-              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-8 h-8 sm:w-9 sm:h-9 text-foreground hover:bg-secondary transition-colors"
+              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/10 w-8 h-8 sm:w-9 sm:h-9 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
               aria-label="Toggle dark mode"
             >
               {dark ? <Sun size={14} /> : <Moon size={14} />}
@@ -227,7 +227,7 @@ const Index = () => {
             {(activeTab === "scoring" || activeTab === "portfolio") && (
               <button
                 onClick={() => exportToCSV(rows)}
-                className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
+                className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/10 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-white/80 hover:bg-white/20 hover:text-white transition-colors"
               >
                 <Download size={14} />
                 <span className="hidden sm:inline">Export CSV</span>
@@ -236,7 +236,8 @@ const Index = () => {
             {activeTab !== "portfolio" && (
               <button
                 onClick={activeTab === "scoring" ? addRow : addFinancial}
-                className="inline-flex items-center gap-1 rounded-lg bg-primary px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center gap-1 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-white transition-colors glow-primary"
+                style={{ background: 'var(--gradient-primary)' }}
               >
                 <Plus size={14} />
                 <span className="hidden sm:inline">
