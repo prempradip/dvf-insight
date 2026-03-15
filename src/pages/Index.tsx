@@ -185,11 +185,11 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <WelcomeModal />
       <KeyboardShortcutsDialog open={showShortcuts} onOpenChange={setShowShortcuts} />
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2.5 sm:py-4 flex items-center justify-between gap-2 sm:gap-3">
+      <header className="sticky top-0 z-10 border-b border-border/50" style={{ background: 'var(--gradient-header)' }}>
+        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-shrink-0">
-            <h1 className="font-display text-base sm:text-xl font-bold tracking-tight">Value Matrix</h1>
-            <p className="text-[9px] sm:text-xs text-muted-foreground mt-0.5 hidden sm:block">DVF · DCF — Prioritise & Model</p>
+            <h1 className="font-display text-base sm:text-xl font-bold tracking-tight text-white">Value Matrix</h1>
+            <p className="text-[9px] sm:text-xs text-white/50 mt-0.5 hidden sm:block">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 flex-wrap justify-end">
             <button
