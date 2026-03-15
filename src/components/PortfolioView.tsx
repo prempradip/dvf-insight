@@ -123,7 +123,8 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
   if (combined.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-muted-foreground text-sm animate-fade-in">
+      <div className="rounded-xl border border-border/60 bg-card/80 backdrop-blur-sm p-8 text-center text-muted-foreground text-sm animate-fade-in" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <div className="font-display font-semibold text-base text-foreground mb-2">No features yet</div>
         Add named features in the DVF Scoring tab to see the portfolio view.
       </div>
     );
