@@ -161,7 +161,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Chart Visibility Toggle */}
-      <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm" style={{ boxShadow: 'var(--shadow-card)' }}>
         <button
           onClick={() => setShowSettings((s) => !s)}
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary/50 transition-colors rounded-xl"
