@@ -177,10 +177,10 @@ const FinancialModelCard = ({ input, index, onChange, onDelete }: Props) => {
 
 function ResultBadge({ icon, label, value, positive }: { icon: React.ReactNode; label: string; value: string; positive: boolean }) {
   return (
-    <div className={`rounded-lg px-3 py-2.5 ${positive ? "bg-accent/10" : "bg-destructive/10"}`}>
-      <div className="flex items-center gap-1.5 mb-1">
+    <div className={`rounded-xl px-3 py-3 transition-all duration-200 hover:scale-[1.02] ${positive ? "bg-accent/10" : "bg-destructive/10"}`}>
+      <div className="flex items-center gap-1.5 mb-1.5">
         <span className={positive ? "text-accent" : "text-destructive"}>{icon}</span>
-        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
+        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
       </div>
       <span className={`font-display font-bold text-sm ${positive ? "text-accent" : "text-destructive"}`}>{value}</span>
     </div>
