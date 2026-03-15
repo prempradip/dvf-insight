@@ -16,9 +16,9 @@ const FinancialSummaryTable = ({ inputs }: Props) => {
   if (scored.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden animate-fade-in">
-      <div className="px-4 py-3 border-b border-border">
-        <h3 className="font-display font-semibold text-sm">Financial Ranking</h3>
+    <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden animate-fade-in" style={{ boxShadow: 'var(--shadow-card)' }}>
+      <div className="px-4 py-3 border-b border-border/60 bg-secondary/30">
+        <h3 className="font-display font-semibold text-sm gradient-text-accent">Financial Ranking</h3>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[580px]">

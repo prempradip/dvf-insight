@@ -17,14 +17,14 @@ const ScoreBadge = ({ label, score, maxScore, variant }: ScoreBadgeProps) => {
   const styles = variantClasses[variant];
 
   return (
-    <div className={`flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 rounded-lg px-3 py-2 text-sm font-medium ${styles.container}`}>
+    <div className={`flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 rounded-xl px-3 py-2.5 text-sm font-medium ${styles.container} transition-all duration-200 hover:scale-[1.02]`}>
       <div className="flex items-center gap-2">
-        <span className="opacity-70 whitespace-nowrap text-xs sm:text-sm">{label}</span>
-        <span className="font-display font-bold text-base">{score}</span>
-        <span className="text-xs opacity-50">/ {maxScore}</span>
+        <span className="opacity-60 whitespace-nowrap text-[10px] sm:text-xs uppercase tracking-wider font-semibold">{label}</span>
+        <span className="font-display font-bold text-lg">{score}</span>
+        <span className="text-[10px] opacity-40 font-medium">/ {maxScore}</span>
       </div>
-      <div className="sm:ml-auto h-1.5 w-full sm:w-12 rounded-full bg-foreground/10 overflow-hidden flex-shrink-0">
-        <div className={`h-full rounded-full ${styles.bar} transition-all duration-500`} style={{ width: `${pct}%` }} />
+      <div className="sm:ml-auto h-2 w-full sm:w-14 rounded-full bg-foreground/8 overflow-hidden flex-shrink-0">
+        <div className={`h-full rounded-full ${styles.bar} transition-all duration-700 ease-out`} style={{ width: `${pct}%` }} />
       </div>
     </div>
   );

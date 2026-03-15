@@ -185,17 +185,17 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <WelcomeModal />
       <KeyboardShortcutsDialog open={showShortcuts} onOpenChange={setShowShortcuts} />
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2.5 sm:py-4 flex items-center justify-between gap-2 sm:gap-3">
+      <header className="sticky top-0 z-10 border-b border-border/50" style={{ background: 'var(--gradient-header)' }}>
+        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-shrink-0">
-            <h1 className="font-display text-base sm:text-xl font-bold tracking-tight">Value Matrix</h1>
-            <p className="text-[9px] sm:text-xs text-muted-foreground mt-0.5 hidden sm:block">DVF · DCF — Prioritise & Model</p>
+            <h1 className="font-display text-base sm:text-xl font-bold tracking-tight text-white">Value Matrix</h1>
+            <p className="text-[9px] sm:text-xs text-white/50 mt-0.5 hidden sm:block">DVF · DCF — Prioritise & Model</p>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 flex-wrap justify-end">
             <button
               onClick={handleUndo}
               disabled={activeTab === "scoring" ? !canUndoRows : activeTab === "financial" ? !canUndoFin : true}
-              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-8 h-8 sm:w-9 sm:h-9 text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/10 w-8 h-8 sm:w-9 sm:h-9 text-white/80 hover:bg-white/20 hover:text-white transition-colors disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Undo"
               title="Undo (Ctrl+Z)"
             >
@@ -204,7 +204,7 @@ const Index = () => {
             <button
               onClick={handleRedo}
               disabled={activeTab === "scoring" ? !canRedoRows : activeTab === "financial" ? !canRedoFin : true}
-              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-8 h-8 sm:w-9 sm:h-9 text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/10 w-8 h-8 sm:w-9 sm:h-9 text-white/80 hover:bg-white/20 hover:text-white transition-colors disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Redo"
               title="Redo (Ctrl+Shift+Z)"
             >
@@ -212,14 +212,14 @@ const Index = () => {
             </button>
             <button
               onClick={() => setShowShortcuts(true)}
-              className="hidden sm:inline-flex items-center justify-center rounded-lg border border-border bg-card w-9 h-9 text-foreground hover:bg-secondary transition-colors"
+              className="hidden sm:inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/10 w-9 h-9 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
               aria-label="Keyboard shortcuts"
             >
               <Keyboard size={16} />
             </button>
             <button
               onClick={() => setDark((d) => !d)}
-              className="inline-flex items-center justify-center rounded-lg border border-border bg-card w-8 h-8 sm:w-9 sm:h-9 text-foreground hover:bg-secondary transition-colors"
+              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/10 w-8 h-8 sm:w-9 sm:h-9 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
               aria-label="Toggle dark mode"
             >
               {dark ? <Sun size={14} /> : <Moon size={14} />}
@@ -227,7 +227,7 @@ const Index = () => {
             {(activeTab === "scoring" || activeTab === "portfolio") && (
               <button
                 onClick={() => exportToCSV(rows)}
-                className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
+                className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/10 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-white/80 hover:bg-white/20 hover:text-white transition-colors"
               >
                 <Download size={14} />
                 <span className="hidden sm:inline">Export CSV</span>
@@ -236,7 +236,8 @@ const Index = () => {
             {activeTab !== "portfolio" && (
               <button
                 onClick={activeTab === "scoring" ? addRow : addFinancial}
-                className="inline-flex items-center gap-1 rounded-lg bg-primary px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center gap-1 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-white transition-colors glow-primary"
+                style={{ background: 'var(--gradient-primary)' }}
               >
                 <Plus size={14} />
                 <span className="hidden sm:inline">
@@ -250,11 +251,11 @@ const Index = () => {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg">
-            <TabsTrigger value="scoring">DVF Scoring</TabsTrigger>
-            <TabsTrigger value="financial">Financial Model</TabsTrigger>
-            <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg glass-card rounded-xl p-1 h-auto">
+            <TabsTrigger value="scoring" className="rounded-lg py-2.5 text-xs sm:text-sm font-medium data-[state=active]:shadow-md">DVF Scoring</TabsTrigger>
+            <TabsTrigger value="financial" className="rounded-lg py-2.5 text-xs sm:text-sm font-medium data-[state=active]:shadow-md">Financial Model</TabsTrigger>
+            <TabsTrigger value="portfolio" className="rounded-lg py-2.5 text-xs sm:text-sm font-medium data-[state=active]:shadow-md">Portfolio</TabsTrigger>
           </TabsList>
 
           <TabsContent value="scoring" className="space-y-4">
@@ -281,9 +282,9 @@ const Index = () => {
             <DVFSummaryTable rows={rows} />
             <button
               onClick={addRow}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border py-4 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 py-5 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300 group"
             >
-              <Plus size={16} />
+              <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
               Add Feature
             </button>
           </TabsContent>
@@ -301,9 +302,9 @@ const Index = () => {
             <FinancialSummaryTable inputs={financials} />
             <button
               onClick={addFinancial}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border py-4 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 py-5 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300 group"
             >
-              <Plus size={16} />
+              <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
               Add Model
             </button>
           </TabsContent>

@@ -35,7 +35,7 @@ const FeatureCard = ({ row, index, onChange, onDelete }: FeatureCardProps) => {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm animate-fade-in overflow-hidden">
+    <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden animate-fade-in hover-lift" style={{ boxShadow: 'var(--shadow-card)' }}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">

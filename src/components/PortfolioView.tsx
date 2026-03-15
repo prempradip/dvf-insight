@@ -123,7 +123,8 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
   if (combined.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-muted-foreground text-sm animate-fade-in">
+      <div className="rounded-xl border border-border/60 bg-card/80 backdrop-blur-sm p-8 text-center text-muted-foreground text-sm animate-fade-in" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <div className="font-display font-semibold text-base text-foreground mb-2">No features yet</div>
         Add named features in the DVF Scoring tab to see the portfolio view.
       </div>
     );
@@ -160,7 +161,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Chart Visibility Toggle */}
-      <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm" style={{ boxShadow: 'var(--shadow-card)' }}>
         <button
           onClick={() => setShowSettings((s) => !s)}
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary/50 transition-colors rounded-xl"
@@ -211,7 +212,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
       {/* Radar Chart */}
       {visibleCharts.radar && combined.length >= 2 && (
-        <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
+        <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
           <h3 className="font-display font-semibold text-sm mb-3">DVF Comparison</h3>
           <ResponsiveContainer width="100%" height={280}>
             <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
@@ -257,7 +258,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
         }));
 
         return (
-          <div className="rounded-xl border border-border bg-card shadow-sm p-3 sm:p-4">
+          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
             <h3 className="font-display font-semibold text-sm mb-1">DVF Score vs NPV</h3>
             <p className="text-[10px] text-muted-foreground mb-3">Bubble size = initial investment</p>
             <ResponsiveContainer width="100%" height={280}>
@@ -327,7 +328,8 @@ const PortfolioView = ({ rows, financials }: Props) => {
         return (
           <div
             key={feat.name + i}
-            className="rounded-xl border border-border bg-card shadow-sm overflow-hidden"
+            className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden hover-lift"
+            style={{ boxShadow: 'var(--shadow-card)' }}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-3 sm:px-4 py-3 border-b border-border gap-2">
