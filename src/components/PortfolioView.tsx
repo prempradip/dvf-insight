@@ -328,7 +328,8 @@ const PortfolioView = ({ rows, financials }: Props) => {
         return (
           <div
             key={feat.name + i}
-            className="rounded-xl border border-border bg-card shadow-sm overflow-hidden"
+            className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden hover-lift"
+            style={{ boxShadow: 'var(--shadow-card)' }}>
           >
             {/* Header */}
             <div className="flex items-center justify-between px-3 sm:px-4 py-3 border-b border-border gap-2">
