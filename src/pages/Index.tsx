@@ -282,9 +282,9 @@ const Index = () => {
             <DVFSummaryTable rows={rows} />
             <button
               onClick={addRow}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border py-4 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 py-5 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300 group"
             >
-              <Plus size={16} />
+              <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
               Add Feature
             </button>
           </TabsContent>
