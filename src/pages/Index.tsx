@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
 import { useUndoRedo } from "@/hooks/use-undo-redo";
 import { FinancialInputs, createEmptyFinancialInput } from "@/lib/financial-calc";
