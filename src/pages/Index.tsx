@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { FeatureRow, createEmptyRow } from "@/lib/dvf-data";
 import { useUndoRedo } from "@/hooks/use-undo-redo";
 import { FinancialInputs, createEmptyFinancialInput } from "@/lib/financial-calc";
@@ -258,60 +259,80 @@ const Index = () => {
             <TabsTrigger value="portfolio" className="rounded-lg py-2.5 text-xs sm:text-sm font-medium data-[state=active]:shadow-md">Portfolio</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="scoring" className="space-y-4">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis]}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
             >
-              <SortableContext items={rows.map((r) => r.id)} strategy={verticalListSortingStrategy}>
-                <div className="space-y-4">
-                  {rows.map((row, i) => (
-                    <SortableFeatureCard
-                      key={row.id}
-                      row={row}
-                      index={i}
-                      onChange={(updated) => updateRow(row.id, updated)}
-                      onDelete={() => deleteRow(row.id)}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-            <DVFSummaryTable rows={rows} />
-            <button
-              onClick={addRow}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 py-5 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300 group"
-            >
-              <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
-              Add Feature
-            </button>
-          </TabsContent>
+              <TabsContent value="scoring" className="space-y-4" forceMount={activeTab === "scoring" ? true : undefined}>
+                {activeTab === "scoring" && (
+                  <>
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                      modifiers={[restrictToVerticalAxis]}
+                    >
+                      <SortableContext items={rows.map((r) => r.id)} strategy={verticalListSortingStrategy}>
+                        <div className="space-y-4">
+                          {rows.map((row, i) => (
+                            <SortableFeatureCard
+                              key={row.id}
+                              row={row}
+                              index={i}
+                              onChange={(updated) => updateRow(row.id, updated)}
+                              onDelete={() => deleteRow(row.id)}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
+                    <DVFSummaryTable rows={rows} />
+                    <button
+                      onClick={addRow}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 py-5 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300 group"
+                    >
+                      <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
+                      Add Feature
+                    </button>
+                  </>
+                )}
+              </TabsContent>
 
-          <TabsContent value="financial" className="space-y-4">
-            {financials.map((fin, i) => (
-              <FinancialModelCard
-                key={fin.id}
-                input={fin}
-                index={i}
-                onChange={(updated) => updateFinancial(fin.id, updated)}
-                onDelete={() => deleteFinancial(fin.id)}
-              />
-            ))}
-            <FinancialSummaryTable inputs={financials} />
-            <button
-              onClick={addFinancial}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 py-5 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300 group"
-            >
-              <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
-              Add Model
-            </button>
-          </TabsContent>
+              <TabsContent value="financial" className="space-y-4" forceMount={activeTab === "financial" ? true : undefined}>
+                {activeTab === "financial" && (
+                  <>
+                    {financials.map((fin, i) => (
+                      <FinancialModelCard
+                        key={fin.id}
+                        input={fin}
+                        index={i}
+                        onChange={(updated) => updateFinancial(fin.id, updated)}
+                        onDelete={() => deleteFinancial(fin.id)}
+                      />
+                    ))}
+                    <FinancialSummaryTable inputs={financials} />
+                    <button
+                      onClick={addFinancial}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 py-5 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300 group"
+                    >
+                      <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
+                      Add Model
+                    </button>
+                  </>
+                )}
+              </TabsContent>
 
-          <TabsContent value="portfolio" className="space-y-4">
-            <PortfolioView rows={rows} financials={financials} />
-          </TabsContent>
+              <TabsContent value="portfolio" className="space-y-4" forceMount={activeTab === "portfolio" ? true : undefined}>
+                {activeTab === "portfolio" && (
+                  <PortfolioView rows={rows} financials={financials} />
+                )}
+              </TabsContent>
+            </motion.div>
+          </AnimatePresence>
         </Tabs>
       </main>
     </div>
