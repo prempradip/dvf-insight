@@ -279,13 +279,19 @@ const Index = () => {
                       <SortableContext items={rows.map((r) => r.id)} strategy={verticalListSortingStrategy}>
                         <div className="space-y-4">
                           {rows.map((row, i) => (
-                            <SortableFeatureCard
+                            <motion.div
                               key={row.id}
-                              row={row}
-                              index={i}
-                              onChange={(updated) => updateRow(row.id, updated)}
-                              onDelete={() => deleteRow(row.id)}
-                            />
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: i * 0.06, ease: "easeOut" }}
+                            >
+                              <SortableFeatureCard
+                                row={row}
+                                index={i}
+                                onChange={(updated) => updateRow(row.id, updated)}
+                                onDelete={() => deleteRow(row.id)}
+                              />
+                            </motion.div>
                           ))}
                         </div>
                       </SortableContext>
