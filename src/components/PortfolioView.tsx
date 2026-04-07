@@ -319,16 +319,26 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
       {/* Additional Charts */}
       {(visibleCharts.dvfBreakdown || visibleCharts.compositeRanking) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.3, ease: "easeOut" }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+        >
           {visibleCharts.dvfBreakdown && <DVFBreakdownChart features={combined} />}
           {visibleCharts.compositeRanking && <CompositeRankingChart features={combined} />}
-        </div>
+        </motion.div>
       )}
       {(visibleCharts.financialComparison || visibleCharts.scoreDistribution) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.4, ease: "easeOut" }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+        >
           {visibleCharts.financialComparison && <FinancialComparisonChart features={combined} />}
           {visibleCharts.scoreDistribution && <ScoreDistributionChart features={combined} />}
-        </div>
+        </motion.div>
       )}
 
       {/* Cards for each feature */}
