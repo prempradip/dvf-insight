@@ -264,7 +264,12 @@ const PortfolioView = ({ rows, financials }: Props) => {
         }));
 
         return (
-          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.2, ease: "easeOut" }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}
+        >
             <h3 className="font-display font-semibold text-sm mb-1">DVF Score vs NPV</h3>
             <p className="text-[10px] text-muted-foreground mb-3">Bubble size = initial investment</p>
             <ResponsiveContainer width="100%" height={280}>
@@ -308,7 +313,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
                 </Scatter>
               </ScatterChart>
             </ResponsiveContainer>
-          </div>
+        </motion.div>
         );
       })()}
 
