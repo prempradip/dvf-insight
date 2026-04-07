@@ -213,7 +213,12 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
       {/* Radar Chart */}
       {visibleCharts.radar && combined.length >= 2 && (
-        <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}
+        >
           <h3 className="font-display font-semibold text-sm mb-3">DVF Comparison</h3>
           <ResponsiveContainer width="100%" height={280}>
             <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
@@ -242,7 +247,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
               <Legend wrapperStyle={{ fontSize: 11 }} />
             </RadarChart>
           </ResponsiveContainer>
-        </div>
+        </motion.div>
       )}
 
       {/* Bubble Chart */}
