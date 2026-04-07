@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { FeatureRow, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
 import { FinancialInputs, calcAllFinancials } from "@/lib/financial-calc";
 import {
@@ -212,7 +213,12 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
       {/* Radar Chart */}
       {visibleCharts.radar && combined.length >= 2 && (
-        <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}
+        >
           <h3 className="font-display font-semibold text-sm mb-3">DVF Comparison</h3>
           <ResponsiveContainer width="100%" height={280}>
             <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
@@ -241,7 +247,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
               <Legend wrapperStyle={{ fontSize: 11 }} />
             </RadarChart>
           </ResponsiveContainer>
-        </div>
+        </motion.div>
       )}
 
       {/* Bubble Chart */}
@@ -258,7 +264,12 @@ const PortfolioView = ({ rows, financials }: Props) => {
         }));
 
         return (
-          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.2, ease: "easeOut" }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}
+        >
             <h3 className="font-display font-semibold text-sm mb-1">DVF Score vs NPV</h3>
             <p className="text-[10px] text-muted-foreground mb-3">Bubble size = initial investment</p>
             <ResponsiveContainer width="100%" height={280}>
@@ -302,22 +313,32 @@ const PortfolioView = ({ rows, financials }: Props) => {
                 </Scatter>
               </ScatterChart>
             </ResponsiveContainer>
-          </div>
+        </motion.div>
         );
       })()}
 
       {/* Additional Charts */}
       {(visibleCharts.dvfBreakdown || visibleCharts.compositeRanking) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.3, ease: "easeOut" }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+        >
           {visibleCharts.dvfBreakdown && <DVFBreakdownChart features={combined} />}
           {visibleCharts.compositeRanking && <CompositeRankingChart features={combined} />}
-        </div>
+        </motion.div>
       )}
       {(visibleCharts.financialComparison || visibleCharts.scoreDistribution) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.4, ease: "easeOut" }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+        >
           {visibleCharts.financialComparison && <FinancialComparisonChart features={combined} />}
           {visibleCharts.scoreDistribution && <ScoreDistributionChart features={combined} />}
-        </div>
+        </motion.div>
       )}
 
       {/* Cards for each feature */}
@@ -326,8 +347,11 @@ const PortfolioView = ({ rows, financials }: Props) => {
         const hasFinancials = feat.npv !== null;
 
         return (
-          <div
+          <motion.div
             key={feat.name + i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.5 + i * 0.06, ease: "easeOut" }}
             className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden hover-lift"
             style={{ boxShadow: 'var(--shadow-card)' }}
           >
@@ -385,7 +409,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
                 />
               </div>
             </div>
-          </div>
+          </motion.div>
         );
       })}
     </div>
