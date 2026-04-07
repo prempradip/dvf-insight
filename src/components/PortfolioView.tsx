@@ -323,9 +323,10 @@ const PortfolioView = ({ rows, financials }: Props) => {
       {/* Additional Charts */}
       {(visibleCharts.dvfBreakdown || visibleCharts.compositeRanking) && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.3, ease: "easeOut" }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 30, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-4"
         >
           {visibleCharts.dvfBreakdown && <DVFBreakdownChart features={combined} />}
@@ -334,9 +335,10 @@ const PortfolioView = ({ rows, financials }: Props) => {
       )}
       {(visibleCharts.financialComparison || visibleCharts.scoreDistribution) && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.4, ease: "easeOut" }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 30, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.05, ease: "easeOut" }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-4"
         >
           {visibleCharts.financialComparison && <FinancialComparisonChart features={combined} />}
