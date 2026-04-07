@@ -111,6 +111,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
   const combined = buildCombined(rows, financials);
   const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
   const [showSettings, setShowSettings] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     localStorage.setItem(CHART_STORAGE_KEY, JSON.stringify(visibleCharts));
