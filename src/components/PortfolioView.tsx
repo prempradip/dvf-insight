@@ -215,9 +215,10 @@ const PortfolioView = ({ rows, financials }: Props) => {
       {/* Radar Chart */}
       {visibleCharts.radar && combined.length >= 2 && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 30, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-3 sm:p-4" style={{ boxShadow: 'var(--shadow-card)' }}
         >
           <h3 className="font-display font-semibold text-sm mb-3">DVF Comparison</h3>
