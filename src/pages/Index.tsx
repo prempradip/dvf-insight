@@ -312,13 +312,19 @@ const Index = () => {
                 {activeTab === "financial" && (
                   <>
                     {financials.map((fin, i) => (
-                      <FinancialModelCard
+                      <motion.div
                         key={fin.id}
-                        input={fin}
-                        index={i}
-                        onChange={(updated) => updateFinancial(fin.id, updated)}
-                        onDelete={() => deleteFinancial(fin.id)}
-                      />
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: i * 0.06, ease: "easeOut" }}
+                      >
+                        <FinancialModelCard
+                          input={fin}
+                          index={i}
+                          onChange={(updated) => updateFinancial(fin.id, updated)}
+                          onDelete={() => deleteFinancial(fin.id)}
+                        />
+                      </motion.div>
                     ))}
                     <FinancialSummaryTable inputs={financials} />
                     <button
