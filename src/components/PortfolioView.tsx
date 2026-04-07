@@ -347,8 +347,11 @@ const PortfolioView = ({ rows, financials }: Props) => {
         const hasFinancials = feat.npv !== null;
 
         return (
-          <div
+          <motion.div
             key={feat.name + i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.5 + i * 0.06, ease: "easeOut" }}
             className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden hover-lift"
             style={{ boxShadow: 'var(--shadow-card)' }}
           >
@@ -406,7 +409,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
                 />
               </div>
             </div>
-          </div>
+          </motion.div>
         );
       })}
     </div>
