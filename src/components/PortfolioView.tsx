@@ -131,6 +131,10 @@ const PortfolioView = ({ rows, financials }: Props) => {
 
   const allVisible = CHART_TYPES.every((c) => visibleCharts[c.key]);
 
+  if (isLoading && combined.length > 0) {
+    return <PortfolioSkeleton />;
+  }
+
   if (combined.length === 0) {
     return (
       <div className="rounded-xl border border-border/60 bg-card/80 backdrop-blur-sm p-8 text-center text-muted-foreground text-sm animate-fade-in" style={{ boxShadow: 'var(--shadow-card)' }}>
