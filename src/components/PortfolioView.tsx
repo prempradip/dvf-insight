@@ -358,7 +358,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.4, delay: i * 0.05, ease: "easeOut" }}
-            className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden hover-lift"
+            className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden hover-lift hover-glow"
             style={{ boxShadow: 'var(--shadow-card)' }}
           >
             {/* Header */}
