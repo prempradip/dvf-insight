@@ -109,10 +109,17 @@ function loadChartVisibility(): Record<ChartKey, boolean> {
 }
 
 const PortfolioView = ({ rows, financials }: Props) => {
-  const combined = buildCombined(rows, financials);
+  const combined = useMemo(() => buildCombined(rows, financials), [rows, financials]);
+  const [isLoading, setIsLoading] = useState(true);
   const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
   const [showSettings, setShowSettings] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, [rows, financials]);
 
   useEffect(() => {
     localStorage.setItem(CHART_STORAGE_KEY, JSON.stringify(visibleCharts));
