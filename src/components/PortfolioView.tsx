@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { FeatureRow, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
 import { FinancialInputs, calcAllFinancials } from "@/lib/financial-calc";
@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, CompositeRankingChart } from "./PortfolioCharts";
 import { Eye, EyeOff, Settings2 } from "lucide-react";
+import PortfolioSkeleton from "./PortfolioSkeleton";
 
 interface Props {
   rows: FeatureRow[];
@@ -108,10 +109,17 @@ function loadChartVisibility(): Record<ChartKey, boolean> {
 }
 
 const PortfolioView = ({ rows, financials }: Props) => {
-  const combined = buildCombined(rows, financials);
+  const combined = useMemo(() => buildCombined(rows, financials), [rows, financials]);
+  const [isLoading, setIsLoading] = useState(true);
   const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
   const [showSettings, setShowSettings] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, [rows, financials]);
 
   useEffect(() => {
     localStorage.setItem(CHART_STORAGE_KEY, JSON.stringify(visibleCharts));
@@ -122,6 +130,10 @@ const PortfolioView = ({ rows, financials }: Props) => {
   };
 
   const allVisible = CHART_TYPES.every((c) => visibleCharts[c.key]);
+
+  if (isLoading && combined.length > 0) {
+    return <PortfolioSkeleton />;
+  }
 
   if (combined.length === 0) {
     return (
