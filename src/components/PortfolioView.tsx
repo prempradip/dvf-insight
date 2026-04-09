@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { FeatureRow, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
 import { FinancialInputs, calcAllFinancials } from "@/lib/financial-calc";
 import {
@@ -8,7 +8,7 @@ import {
   ResponsiveContainer, Legend, Cell,
 } from "recharts";
 import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, CompositeRankingChart } from "./PortfolioCharts";
-import { Eye, EyeOff, Settings2 } from "lucide-react";
+import { Eye, EyeOff, Settings2, ChevronDown } from "lucide-react";
 import PortfolioSkeleton from "./PortfolioSkeleton";
 
 interface Props {
