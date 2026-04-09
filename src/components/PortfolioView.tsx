@@ -33,6 +33,9 @@ interface CombinedFeature {
   payback: number | null;
   investment: number;
   compositeScore: number;
+  discountRate: number;
+  cashFlows: { year: number; amount: number }[];
+  dcfValues: number[];
 }
 
 const MAX_DVF = 12 * 21;
@@ -70,6 +73,9 @@ function buildCombined(rows: FeatureRow[], financials: FinancialInputs[]): Combi
         payback: results?.paybackPeriod ?? null,
         investment: fin?.initialInvestment ?? 0,
         compositeScore,
+        discountRate: fin?.discountRate ?? 10,
+        cashFlows: fin?.cashFlows ?? [],
+        dcfValues: results?.dcfValues ?? [],
       };
     })
     .sort((a, b) => b.compositeScore - a.compositeScore);
