@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { FeatureRow, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
 import { FinancialInputs, calcAllFinancials } from "@/lib/financial-calc";
 import {
@@ -8,7 +8,7 @@ import {
   ResponsiveContainer, Legend, Cell,
 } from "recharts";
 import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, CompositeRankingChart } from "./PortfolioCharts";
-import { Eye, EyeOff, Settings2 } from "lucide-react";
+import { Eye, EyeOff, Settings2, ChevronDown } from "lucide-react";
 import PortfolioSkeleton from "./PortfolioSkeleton";
 
 interface Props {
@@ -33,6 +33,9 @@ interface CombinedFeature {
   payback: number | null;
   investment: number;
   compositeScore: number;
+  discountRate: number;
+  cashFlows: { year: number; amount: number }[];
+  dcfValues: number[];
 }
 
 const MAX_DVF = 12 * 21;
@@ -70,6 +73,9 @@ function buildCombined(rows: FeatureRow[], financials: FinancialInputs[]): Combi
         payback: results?.paybackPeriod ?? null,
         investment: fin?.initialInvestment ?? 0,
         compositeScore,
+        discountRate: fin?.discountRate ?? 10,
+        cashFlows: fin?.cashFlows ?? [],
+        dcfValues: results?.dcfValues ?? [],
       };
     })
     .sort((a, b) => b.compositeScore - a.compositeScore);
@@ -110,10 +116,20 @@ function loadChartVisibility(): Record<ChartKey, boolean> {
 
 const PortfolioView = ({ rows, financials }: Props) => {
   const combined = useMemo(() => buildCombined(rows, financials), [rows, financials]);
+  const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
   const [showSettings, setShowSettings] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  const toggleExpand = (index: number) => {
+    setExpandedCards((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -362,6 +378,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
       {combined.map((feat, i) => {
         const tier = tierBadge(feat.compositeScore);
         const hasFinancials = feat.npv !== null;
+        const isExpanded = expandedCards.has(i);
 
         return (
           <motion.div
@@ -373,8 +390,11 @@ const PortfolioView = ({ rows, financials }: Props) => {
             className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm overflow-hidden hover-lift hover-glow"
             style={{ boxShadow: 'var(--shadow-card)' }}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-3 sm:px-4 py-3 border-b border-border gap-2">
+            {/* Header - clickable */}
+            <button
+              onClick={() => toggleExpand(i)}
+              className="w-full flex items-center justify-between px-3 sm:px-4 py-3 border-b border-border gap-2 hover:bg-secondary/30 transition-colors cursor-pointer text-left"
+            >
               <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 text-primary font-display font-bold text-xs flex items-center justify-center">
                   {i + 1}
@@ -393,10 +413,14 @@ const PortfolioView = ({ rows, financials }: Props) => {
                 <span className={`font-display font-bold text-base sm:text-lg ${tierColor(feat.compositeScore)}`}>
                   {Math.round(feat.compositeScore)}
                 </span>
+                <ChevronDown
+                  size={16}
+                  className={`text-muted-foreground transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+                />
               </div>
-            </div>
+            </button>
 
-            {/* Metrics grid - responsive */}
+            {/* Metrics grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-px bg-border">
               <MetricCell label="DVF Score" value={`${feat.dvfTotal}/${MAX_DVF}`} sub={`${Math.round(feat.dvfPct * 100)}%`} />
               <MetricCell label="Desirability" value={String(feat.desirability)} className="text-desirability" />
@@ -427,6 +451,118 @@ const PortfolioView = ({ rows, financials }: Props) => {
                 />
               </div>
             </div>
+
+            {/* Expandable detail panel */}
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="border-t border-border bg-secondary/20 px-3 sm:px-4 py-4 space-y-4">
+                    {/* DVF Breakdown */}
+                    <div>
+                      <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">DVF Score Breakdown</h5>
+                      <div className="grid grid-cols-3 gap-3">
+                        {[
+                          { label: "Desirability", value: feat.desirability, max: 4 * 21, color: "bg-desirability" },
+                          { label: "Viability", value: feat.viability, max: 4 * 21, color: "bg-viability" },
+                          { label: "Feasibility", value: feat.feasibility, max: 4 * 21, color: "bg-feasibility" },
+                        ].map((dim) => (
+                          <div key={dim.label} className="space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-muted-foreground">{dim.label}</span>
+                              <span className="font-semibold">{Math.round((dim.value / dim.max) * 100)}%</span>
+                            </div>
+                            <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${dim.color} transition-all duration-500`}
+                                style={{ width: `${(dim.value / dim.max) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Financial Breakdown */}
+                    {hasFinancials ? (
+                      <div className="space-y-3">
+                        <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Financial Breakdown</h5>
+                        
+                        {/* Key financial metrics */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {[
+                            { label: "Investment", value: formatCurrency(feat.investment) },
+                            { label: "Discount Rate", value: `${feat.discountRate}%` },
+                            { label: "Payback", value: feat.payback !== null ? `${feat.payback.toFixed(1)} yrs` : "Never" },
+                            { label: "Composite", value: `${Math.round(feat.compositeScore)}/100` },
+                          ].map((m) => (
+                            <div key={m.label} className="rounded-lg bg-card border border-border/60 px-3 py-2 text-center">
+                              <div className="text-[9px] text-muted-foreground uppercase tracking-wider">{m.label}</div>
+                              <div className="font-display font-semibold text-sm mt-0.5">{m.value}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Cash Flow Table */}
+                        {feat.cashFlows.length > 0 && (
+                          <div className="rounded-lg border border-border/60 overflow-hidden">
+                            <table className="w-full text-xs">
+                              <thead>
+                                <tr className="bg-secondary/50">
+                                  <th className="text-left px-3 py-2 font-medium text-muted-foreground">Year</th>
+                                  <th className="text-right px-3 py-2 font-medium text-muted-foreground">Cash Flow</th>
+                                  <th className="text-right px-3 py-2 font-medium text-muted-foreground">Discounted</th>
+                                  <th className="text-right px-3 py-2 font-medium text-muted-foreground hidden sm:table-cell">Cumulative</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr className="border-t border-border/40">
+                                  <td className="px-3 py-1.5 font-medium">0</td>
+                                  <td className="px-3 py-1.5 text-right text-destructive font-semibold">
+                                    -{formatCurrency(feat.investment)}
+                                  </td>
+                                  <td className="px-3 py-1.5 text-right text-destructive font-semibold">
+                                    -{formatCurrency(feat.investment)}
+                                  </td>
+                                  <td className="px-3 py-1.5 text-right text-destructive font-semibold hidden sm:table-cell">
+                                    -{formatCurrency(feat.investment)}
+                                  </td>
+                                </tr>
+                                {feat.cashFlows.map((cf, idx) => {
+                                  const dcf = feat.dcfValues[idx] ?? 0;
+                                  const cumulative = feat.dcfValues.slice(0, idx + 1).reduce((a, b) => a + b, 0) - feat.investment;
+                                  return (
+                                    <tr key={cf.year} className="border-t border-border/40">
+                                      <td className="px-3 py-1.5 font-medium">{cf.year}</td>
+                                      <td className="px-3 py-1.5 text-right">{formatCurrency(cf.amount)}</td>
+                                      <td className="px-3 py-1.5 text-right">{formatCurrency(dcf)}</td>
+                                      <td className={`px-3 py-1.5 text-right font-semibold hidden sm:table-cell ${cumulative >= 0 ? "text-accent" : "text-destructive"}`}>
+                                        {formatCurrency(cumulative)}
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="rounded-lg bg-card border border-border/60 px-4 py-3 text-center">
+                        <p className="text-xs text-muted-foreground">
+                          No financial data available. Add investment & cash flows in the Financial Model tab.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         );
       })}
