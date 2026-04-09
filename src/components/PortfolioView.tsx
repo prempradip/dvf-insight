@@ -116,10 +116,20 @@ function loadChartVisibility(): Record<ChartKey, boolean> {
 
 const PortfolioView = ({ rows, financials }: Props) => {
   const combined = useMemo(() => buildCombined(rows, financials), [rows, financials]);
+  const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
   const [showSettings, setShowSettings] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  const toggleExpand = (index: number) => {
+    setExpandedCards((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   useEffect(() => {
     setIsLoading(true);
