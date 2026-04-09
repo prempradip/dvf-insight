@@ -8,7 +8,7 @@ import {
   ResponsiveContainer, Legend, Cell,
 } from "recharts";
 import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, CompositeRankingChart } from "./PortfolioCharts";
-import { Eye, EyeOff, Settings2, ChevronDown } from "lucide-react";
+import { Eye, EyeOff, Settings2, ChevronDown, ChevronsUpDown } from "lucide-react";
 import PortfolioSkeleton from "./PortfolioSkeleton";
 
 interface Props {
