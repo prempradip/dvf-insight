@@ -8,7 +8,7 @@ import {
   ResponsiveContainer, Legend, Cell,
 } from "recharts";
 import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, CompositeRankingChart } from "./PortfolioCharts";
-import { Eye, EyeOff, Settings2, ChevronDown } from "lucide-react";
+import { Eye, EyeOff, Settings2, ChevronDown, ChevronsUpDown } from "lucide-react";
 import PortfolioSkeleton from "./PortfolioSkeleton";
 
 interface Props {
@@ -374,7 +374,25 @@ const PortfolioView = ({ rows, financials }: Props) => {
         </motion.div>
       )}
 
-      {/* Cards for each feature */}
+      {/* Expand/Collapse All + Cards */}
+      {combined.length > 1 && (
+        <div className="flex justify-end">
+          <button
+            onClick={() => {
+              const allExpanded = combined.every((_, i) => expandedCards.has(i));
+              if (allExpanded) {
+                setExpandedCards(new Set());
+              } else {
+                setExpandedCards(new Set(combined.map((_, i) => i)));
+              }
+            }}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-card/90 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+          >
+            <ChevronsUpDown size={14} />
+            {combined.every((_, i) => expandedCards.has(i)) ? "Collapse All" : "Expand All"}
+          </button>
+        </div>
+      )}
       {combined.map((feat, i) => {
         const tier = tierBadge(feat.compositeScore);
         const hasFinancials = feat.npv !== null;
