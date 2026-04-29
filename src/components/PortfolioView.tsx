@@ -199,7 +199,7 @@ const PortfolioView = ({
   const setShowBackToTop = (v: boolean | ((p: boolean) => boolean)) => {
     _setShowBackToTop((prev) => {
       const next = typeof v === "function" ? (v as (p: boolean) => boolean)(prev) : v;
-      cachedBackToTopVisible = next;
+      writeCachedBackToTop(next);
       return next;
     });
   };
