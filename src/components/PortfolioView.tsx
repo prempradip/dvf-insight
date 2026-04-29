@@ -741,7 +741,8 @@ const PortfolioView = ({
             transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
             onClick={scrollToTop}
             aria-label="Back to top"
-            className={`fixed bottom-6 right-6 z-50 h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 ${
+            type="button"
+            className={`fixed bottom-6 right-6 z-50 h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               prefersReducedMotion ? "" : "hover:scale-105 transition-all"
             }`}
             style={{ boxShadow: "var(--shadow-card)" }}
