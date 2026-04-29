@@ -55,8 +55,32 @@ export const BACK_TO_TOP_HIDE_THRESHOLD = 300;
  * Module-level cache that survives unmount/remount (e.g. tab switches).
  * Avoids the back-to-top button flashing in/out when returning to the
  * Portfolio tab while the page is still scrolled down.
+ *
+ * Also mirrored to sessionStorage so the state survives a full page reload
+ * within the same browser tab (cleared automatically when the tab closes).
  */
-let cachedBackToTopVisible = false;
+const BACK_TO_TOP_SESSION_KEY = "dvf-portfolio-back-to-top-visible";
+
+const readCachedBackToTop = (): boolean => {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.sessionStorage.getItem(BACK_TO_TOP_SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+const writeCachedBackToTop = (v: boolean) => {
+  cachedBackToTopVisible = v;
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(BACK_TO_TOP_SESSION_KEY, v ? "1" : "0");
+  } catch {
+    /* ignore quota / privacy-mode errors */
+  }
+};
+
+let cachedBackToTopVisible = readCachedBackToTop();
 
 const formatCurrency = (v: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
@@ -175,7 +199,7 @@ const PortfolioView = ({
   const setShowBackToTop = (v: boolean | ((p: boolean) => boolean)) => {
     _setShowBackToTop((prev) => {
       const next = typeof v === "function" ? (v as (p: boolean) => boolean)(prev) : v;
-      cachedBackToTopVisible = next;
+      writeCachedBackToTop(next);
       return next;
     });
   };
