@@ -141,12 +141,9 @@ const PortfolioView = ({
   const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
   const [showSettings, setShowSettings] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const [showBackToTop, setShowBackToTop] = useState(false);
-  // Seed from cache on mount so we don't flash the wrong state on tab return.
-  const [showBackToTop, _setShowBackToTop] = (
-    () => useState<boolean>(cachedBackToTopVisible)
-  )();
-  const setShowBackToTop: typeof _setShowBackToTop = (v) => {
+  // Seed from module-level cache so the button doesn't flash on tab return.
+  const [showBackToTop, _setShowBackToTop] = useState<boolean>(cachedBackToTopVisible);
+  const setShowBackToTop = (v: boolean | ((p: boolean) => boolean)) => {
     _setShowBackToTop((prev) => {
       const next = typeof v === "function" ? (v as (p: boolean) => boolean)(prev) : v;
       cachedBackToTopVisible = next;
