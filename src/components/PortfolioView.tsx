@@ -8,7 +8,7 @@ import {
   ResponsiveContainer, Legend, Cell,
 } from "recharts";
 import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, CompositeRankingChart } from "./PortfolioCharts";
-import { Eye, EyeOff, Settings2, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { Eye, EyeOff, Settings2, ChevronDown, ChevronsUpDown, ArrowUp } from "lucide-react";
 import PortfolioSkeleton from "./PortfolioSkeleton";
 
 interface Props {
@@ -121,6 +121,14 @@ const PortfolioView = ({ rows, financials }: Props) => {
   const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
   const [showSettings, setShowSettings] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const toggleExpand = (index: number) => {
     setExpandedCards((prev) => {
