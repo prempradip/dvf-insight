@@ -14,7 +14,15 @@ import PortfolioSkeleton from "./PortfolioSkeleton";
 interface Props {
   rows: FeatureRow[];
   financials: FinancialInputs[];
+  /** Scroll offset (px) at which the back-to-top button appears. */
+  backToTopShowThreshold?: number;
+  /** Scroll offset (px) below which the back-to-top button hides. Must be < show threshold for hysteresis. */
+  backToTopHideThreshold?: number;
 }
+
+/** Defaults for back-to-top visibility hysteresis (px scroll offset). */
+export const BACK_TO_TOP_SHOW_THRESHOLD = 400;
+export const BACK_TO_TOP_HIDE_THRESHOLD = 300;
 
 const formatCurrency = (v: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
@@ -114,7 +122,12 @@ function loadChartVisibility(): Record<ChartKey, boolean> {
   return Object.fromEntries(CHART_TYPES.map((c) => [c.key, true])) as Record<ChartKey, boolean>;
 }
 
-const PortfolioView = ({ rows, financials }: Props) => {
+const PortfolioView = ({
+  rows,
+  financials,
+  backToTopShowThreshold = BACK_TO_TOP_SHOW_THRESHOLD,
+  backToTopHideThreshold = BACK_TO_TOP_HIDE_THRESHOLD,
+}: Props) => {
   const combined = useMemo(() => buildCombined(rows, financials), [rows, financials]);
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
@@ -148,19 +161,21 @@ const PortfolioView = ({ rows, financials }: Props) => {
         ? window.scrollY
         : (scroller as HTMLElement).scrollTop;
 
-    // Hysteresis: show above 400px, hide once back under 300px — prevents flicker.
+    // Hysteresis prevents flicker around the threshold.
+    const showAt = backToTopShowThreshold;
+    const hideAt = Math.min(backToTopHideThreshold, showAt);
     const onScroll = () => {
       const y = getY();
       setShowBackToTop((prev) => {
-        if (!prev && y > 400) return true;
-        if (prev && y < 300) return false;
+        if (!prev && y > showAt) return true;
+        if (prev && y < hideAt) return false;
         return prev;
       });
     };
     scroller.addEventListener("scroll", onScroll, { passive: true } as AddEventListenerOptions);
     onScroll();
     return () => scroller.removeEventListener("scroll", onScroll as EventListener);
-  }, []);
+  }, [backToTopShowThreshold, backToTopHideThreshold]);
 
   const scrollToTop = () => {
     const scroller = scrollerRef.current ?? window;
