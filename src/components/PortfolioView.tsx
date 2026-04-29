@@ -11,6 +11,29 @@ import { DVFBreakdownChart, FinancialComparisonChart, ScoreDistributionChart, Co
 import { Eye, EyeOff, Settings2, ChevronDown, ChevronsUpDown, ArrowUp } from "lucide-react";
 import PortfolioSkeleton from "./PortfolioSkeleton";
 
+/** Easing curves for the back-to-top scroll animation. */
+export type ScrollEasing =
+  | "linear"
+  | "easeInQuad"
+  | "easeOutQuad"
+  | "easeInOutQuad"
+  | "easeOutCubic"
+  | "easeInOutCubic"
+  | ((t: number) => number);
+
+const EASINGS: Record<Exclude<ScrollEasing, (t: number) => number>, (t: number) => number> = {
+  linear: (t) => t,
+  easeInQuad: (t) => t * t,
+  easeOutQuad: (t) => t * (2 - t),
+  easeInOutQuad: (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
+  easeOutCubic: (t) => 1 - Math.pow(1 - t, 3),
+  easeInOutCubic: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+};
+
+/** Default scroll-to-top animation settings. */
+export const BACK_TO_TOP_SCROLL_DURATION = 500; // ms
+export const BACK_TO_TOP_SCROLL_EASING: ScrollEasing = "easeInOutCubic";
+
 interface Props {
   rows: FeatureRow[];
   financials: FinancialInputs[];
@@ -18,6 +41,10 @@ interface Props {
   backToTopShowThreshold?: number;
   /** Scroll offset (px) below which the back-to-top button hides. Must be < show threshold for hysteresis. */
   backToTopHideThreshold?: number;
+  /** Scroll-to-top animation duration in ms. */
+  backToTopDuration?: number;
+  /** Easing curve name or custom function (input/output in [0,1]). */
+  backToTopEasing?: ScrollEasing;
 }
 
 /** Defaults for back-to-top visibility hysteresis (px scroll offset). */
@@ -134,6 +161,8 @@ const PortfolioView = ({
   financials,
   backToTopShowThreshold = BACK_TO_TOP_SHOW_THRESHOLD,
   backToTopHideThreshold = BACK_TO_TOP_HIDE_THRESHOLD,
+  backToTopDuration = BACK_TO_TOP_SCROLL_DURATION,
+  backToTopEasing = BACK_TO_TOP_SCROLL_EASING,
 }: Props) => {
   const combined = useMemo(() => buildCombined(rows, financials), [rows, financials]);
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
@@ -194,12 +223,49 @@ const PortfolioView = ({
 
   const scrollToTop = () => {
     const scroller = scrollerRef.current ?? window;
-    const behavior: ScrollBehavior = prefersReducedMotion ? "auto" : "smooth";
-    if (scroller === window) {
-      window.scrollTo({ top: 0, behavior });
-    } else {
-      (scroller as HTMLElement).scrollTo({ top: 0, behavior });
+    const isWindow = scroller === window;
+    const startY = isWindow ? window.scrollY : (scroller as HTMLElement).scrollTop;
+    if (startY <= 0) return;
+
+    // Reduced motion or zero duration: jump instantly.
+    if (prefersReducedMotion || backToTopDuration <= 0) {
+      if (isWindow) window.scrollTo({ top: 0, behavior: "auto" });
+      else (scroller as HTMLElement).scrollTo({ top: 0, behavior: "auto" });
+      return;
     }
+
+    const ease =
+      typeof backToTopEasing === "function" ? backToTopEasing : EASINGS[backToTopEasing];
+    const duration = backToTopDuration;
+    const startTime = performance.now();
+    let cancelled = false;
+
+    // Cancel the animation if the user scrolls manually (wheel/touch/keys).
+    const cancel = () => {
+      cancelled = true;
+    };
+    const target: EventTarget = isWindow ? window : (scroller as HTMLElement);
+    target.addEventListener("wheel", cancel, { passive: true, once: true });
+    target.addEventListener("touchstart", cancel, { passive: true, once: true });
+
+    const step = (now: number) => {
+      if (cancelled) {
+        target.removeEventListener("wheel", cancel);
+        target.removeEventListener("touchstart", cancel);
+        return;
+      }
+      const t = Math.min(1, (now - startTime) / duration);
+      const y = startY * (1 - ease(t));
+      if (isWindow) window.scrollTo(0, y);
+      else (scroller as HTMLElement).scrollTop = y;
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        target.removeEventListener("wheel", cancel);
+        target.removeEventListener("touchstart", cancel);
+      }
+    };
+    requestAnimationFrame(step);
   };
 
   const toggleExpand = (index: number) => {
