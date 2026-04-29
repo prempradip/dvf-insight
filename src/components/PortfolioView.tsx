@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { FeatureRow, calcTotal, calcCategoryTotal } from "@/lib/dvf-data";
 import { FinancialInputs, calcAllFinancials } from "@/lib/financial-calc";
@@ -122,23 +122,55 @@ const PortfolioView = ({ rows, financials }: Props) => {
   const [showSettings, setShowSettings] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLElement | Window | null>(null);
 
   useEffect(() => {
-    // Hysteresis: show once we pass 400px, hide only after dropping below 300px.
-    // This prevents flicker right around the threshold and ensures the button
-    // is fully hidden when the user is near the top.
+    // Find the nearest scrollable ancestor; fall back to window.
+    const findScrollParent = (el: HTMLElement | null): HTMLElement | Window => {
+      let node: HTMLElement | null = el?.parentElement ?? null;
+      while (node && node !== document.body) {
+        const style = getComputedStyle(node);
+        const overflowY = style.overflowY;
+        const canScroll = (overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay")
+          && node.scrollHeight > node.clientHeight;
+        if (canScroll) return node;
+        node = node.parentElement;
+      }
+      return window;
+    };
+
+    const scroller = findScrollParent(rootRef.current);
+    scrollerRef.current = scroller;
+
+    const getY = () =>
+      scroller === window
+        ? window.scrollY
+        : (scroller as HTMLElement).scrollTop;
+
+    // Hysteresis: show above 400px, hide once back under 300px — prevents flicker.
     const onScroll = () => {
-      const y = window.scrollY;
+      const y = getY();
       setShowBackToTop((prev) => {
         if (!prev && y > 400) return true;
         if (prev && y < 300) return false;
         return prev;
       });
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
+    scroller.addEventListener("scroll", onScroll, { passive: true } as AddEventListenerOptions);
     onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => scroller.removeEventListener("scroll", onScroll as EventListener);
   }, []);
+
+  const scrollToTop = () => {
+    const scroller = scrollerRef.current ?? window;
+    const behavior: ScrollBehavior = prefersReducedMotion ? "auto" : "smooth";
+    if (scroller === window) {
+      window.scrollTo({ top: 0, behavior });
+    } else {
+      (scroller as HTMLElement).scrollTo({ top: 0, behavior });
+    }
+  };
 
   const toggleExpand = (index: number) => {
     setExpandedCards((prev) => {
@@ -207,7 +239,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
   ];
 
   return (
-    <div className="space-y-4 animate-fade-in">
+    <div ref={rootRef} className="space-y-4 animate-fade-in">
       {/* Chart Visibility Toggle */}
       <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm" style={{ boxShadow: 'var(--shadow-card)' }}>
         <button
@@ -611,7 +643,7 @@ const PortfolioView = ({ rows, financials }: Props) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 10 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" })}
+            onClick={scrollToTop}
             aria-label="Back to top"
             className="fixed bottom-6 right-6 z-50 h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 hover:scale-105 transition-all"
             style={{ boxShadow: "var(--shadow-card)" }}
