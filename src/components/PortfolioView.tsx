@@ -124,7 +124,17 @@ const PortfolioView = ({ rows, financials }: Props) => {
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setShowBackToTop(window.scrollY > 400);
+    // Hysteresis: show once we pass 400px, hide only after dropping below 300px.
+    // This prevents flicker right around the threshold and ensures the button
+    // is fully hidden when the user is near the top.
+    const onScroll = () => {
+      const y = window.scrollY;
+      setShowBackToTop((prev) => {
+        if (!prev && y > 400) return true;
+        if (prev && y < 300) return false;
+        return prev;
+      });
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
