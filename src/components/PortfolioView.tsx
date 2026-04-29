@@ -639,13 +639,15 @@ const PortfolioView = ({ rows, financials }: Props) => {
         {showBackToTop && (
           <motion.button
             key="back-to-top"
-            initial={{ opacity: 0, scale: 0.8, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.8, y: 10 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.8, y: 10 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="fixed bottom-6 right-6 z-50 h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 hover:scale-105 transition-all"
+            className={`fixed bottom-6 right-6 z-50 h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 ${
+              prefersReducedMotion ? "" : "hover:scale-105 transition-all"
+            }`}
             style={{ boxShadow: "var(--shadow-card)" }}
           >
             <ArrowUp size={18} />
