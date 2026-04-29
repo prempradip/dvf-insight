@@ -24,6 +24,13 @@ interface Props {
 export const BACK_TO_TOP_SHOW_THRESHOLD = 400;
 export const BACK_TO_TOP_HIDE_THRESHOLD = 300;
 
+/**
+ * Module-level cache that survives unmount/remount (e.g. tab switches).
+ * Avoids the back-to-top button flashing in/out when returning to the
+ * Portfolio tab while the page is still scrolled down.
+ */
+let cachedBackToTopVisible = false;
+
 const formatCurrency = (v: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
 
@@ -134,7 +141,15 @@ const PortfolioView = ({
   const [visibleCharts, setVisibleCharts] = useState<Record<ChartKey, boolean>>(loadChartVisibility);
   const [showSettings, setShowSettings] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const [showBackToTop, setShowBackToTop] = useState(false);
+  // Seed from module-level cache so the button doesn't flash on tab return.
+  const [showBackToTop, _setShowBackToTop] = useState<boolean>(cachedBackToTopVisible);
+  const setShowBackToTop = (v: boolean | ((p: boolean) => boolean)) => {
+    _setShowBackToTop((prev) => {
+      const next = typeof v === "function" ? (v as (p: boolean) => boolean)(prev) : v;
+      cachedBackToTopVisible = next;
+      return next;
+    });
+  };
   const rootRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLElement | Window | null>(null);
 
