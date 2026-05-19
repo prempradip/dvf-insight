@@ -117,7 +117,7 @@ export const FEASIBILITY_LABELS: Record<string, { value: ScoreValue; label: stri
 };
 
 export const CRITERIA: Criterion[] = [
-  { id: "student_needs", label: "Meet Student Needs", description: "Simplicity (student NPS)", category: "desirability", inverted: false },
+  { id: "student_needs", label: "Meet Customer Needs", description: "Simplicity (customer NPS)", category: "desirability", inverted: false },
   { id: "business_goals", label: "Meet Business Goals", description: "FY Strategy, lead creation, lead scoring, consistency, Business Scalability", category: "desirability", inverted: false },
   { id: "client_needs", label: "Meet Client Needs", description: "Lead Quality, Diversity, Conversion", category: "desirability", inverted: false },
   { id: "competitiveness", label: "Improve Competitiveness", description: "Brand recognition, Marketshare, Innovation", category: "desirability", inverted: false },
