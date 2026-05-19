@@ -19,11 +19,11 @@ export const SCORE_OPTIONS: { value: ScoreValue; label: string }[] = [
 // Criterion-specific labels for Desirability & Viability
 export const CRITERION_LABELS: Record<string, { value: ScoreValue; label: string }[]> = {
   student_needs: [
-    { value: 0, label: "No Student Benefit" },
+    { value: 0, label: "No User Benefit" },
     { value: 5, label: "Nice to Have" },
     { value: 8, label: "Improves Experience" },
     { value: 13, label: "High Satisfaction Driver" },
-    { value: 21, label: "Must-Have for Students" },
+    { value: 21, label: "Must-Have for Users" },
   ],
   business_goals: [
     { value: 0, label: "No Strategic Fit" },
