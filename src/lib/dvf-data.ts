@@ -123,7 +123,7 @@ export const CRITERIA: Criterion[] = [
   { id: "competitiveness", label: "Improve Competitiveness", description: "Brand recognition, Marketshare, Innovation", category: "desirability", inverted: false },
   { id: "revenue", label: "Revenue", description: "SP Volumes, Conversions", category: "viability", inverted: false },
   { id: "cost_optimisation", label: "Cost Optimisation", description: "Reduction in Cost of investment", category: "viability", inverted: false },
-  { id: "efficiency", label: "Improve Efficiency", description: "Counsellor/Staff Productivity", category: "viability", inverted: false },
+  { id: "efficiency", label: "Improve Efficiency", description: "Team/Staff Productivity", category: "viability", inverted: false },
   { id: "enps", label: "Improve eNPS", description: "Staff Engagement", category: "viability", inverted: false },
   { id: "people", label: "People", description: "Team Capability", category: "feasibility", inverted: true },
   { id: "process_risk", label: "Process & Risk Reduction", description: "Risk & Incident Reduction", category: "feasibility", inverted: true },
